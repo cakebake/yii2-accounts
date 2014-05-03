@@ -1,0 +1,20 @@
+{
+    "name": "cakebake/yii2-accounts",
+    "description": "User, manage, login and profile module for yii2 framework",
+    "keywords": ["yii", "yii2", "user", "client", "auth", "authentication", "account", "login"],
+    "type": "yii2-extension",
+    "license": "LGPL-V3",
+    "authors": [
+        {
+            "name": "cakebake (Jens A.)",
+            "email": "cakebake.dev@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*",
+		"yiisoft/yii2-bootstrap": "*"
+    },
+    "autoload": {
+		"psr-4": { "cakebake\\accounts\\": "" }
+    }
+}
