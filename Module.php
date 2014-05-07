@@ -7,6 +7,11 @@ use Yii;
 class Module extends \yii\base\Module
 {
     /**
+    * @var bool Enable/Disable Login
+    */
+    public $loginEnabled = true;
+
+    /**
     * @inheritdoc
     */
     public $defaultRoute = 'user';
