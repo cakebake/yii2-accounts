@@ -4,9 +4,53 @@ namespace cakebake\accounts\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 
 class UserController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['logout'],
+                'rules' => [
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -18,11 +62,21 @@ class UserController extends Controller
         switch ($action->id) {
            case 'index':
                 if (Yii::$app->user->isGuest) {
-                    $this->goLogin();
+
+                    return $this->goLogin();
                 }
              break;
            case 'login':
+                if (!Yii::$app->user->isGuest) {
 
+                    return $this->goHome();
+                }
+             break;
+           case 'logout':
+                if (Yii::$app->user->isGuest) {
+
+                    return $this->goLogin();
+                }
              break;
 //           case 'profile':
 //
@@ -48,7 +102,26 @@ class UserController extends Controller
     */
     public function actionLogin()
     {
-        return $this->render('login');
+        $model = $this->module->getModel('login');
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+
+            return $this->goBack();
+        } else {
+
+            return $this->render('login', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+    * The logout action
+    */
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->goHome();
     }
 
     /**
