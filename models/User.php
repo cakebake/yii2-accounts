@@ -34,6 +34,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function behaviors()
     {
+        $time = date('Y-m-d H:i:s');
         return [
             'timestamp' => [
                 'class' => 'yii\behaviors\TimestampBehavior',
@@ -41,6 +42,7 @@ class User extends ActiveRecord implements IdentityInterface
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
                 ],
+                'value' => $time,
             ],
         ];
     }

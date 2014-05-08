@@ -2,6 +2,12 @@
 
 use yii\db\Schema;
 
+/**
+* DATABSE SCHEMA OF THIS MODULE
+*
+* @version 1.0.0
+* @see http://www.yiiframework.com/doc-2.0/guide-console-migrate.html
+*/
 class m140508_203444_accounts extends \yii\db\Migration
 {
     public function up()
@@ -23,21 +29,22 @@ class m140508_203444_accounts extends \yii\db\Migration
             'password_reset_token' => Schema::TYPE_STRING,
             'role' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 10',
             'status' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 10',
-            'created_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
             'updated_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
+            'created_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
         ], $tableOptions);
 
         /**
         * INSERT initial account: "user:password"
         */
+        $time = date('Y-m-d H:i:s');
         $this->insert('{{%user}}', [
             'username' => 'user',
             'email' => 'user@example.com',
             'password_hash' => '$2a$13$6Z/QJ5NCPSkvGK45ZCLnaeKk7dWh7zjihiEguQdh8fE.EEPrqEcXS',
             'role' => '10',
             'status' => '10',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'created_at' => $time,
+            'updated_at' => $time,
         ]);
     }
 
