@@ -33,4 +33,4 @@ To access the module, you need to add this to your application configuration:
 ```
 
 Check your database settings and run migration from your console:
-```php yii migrate --migrationPath=@vendor/yii2-accounts/migrations```
+```php yii migrate --migrationPath=@vendor/cakebake/yii2-accounts/migrations```
