@@ -10,7 +10,7 @@ use yii\db\Schema;
 */
 class m140508_203444_accounts extends \yii\db\Migration
 {
-    public function up()
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -48,7 +48,7 @@ class m140508_203444_accounts extends \yii\db\Migration
         ]);
     }
 
-    public function down()
+    public function safeDown()
     {
         /**
         * DROP user table
