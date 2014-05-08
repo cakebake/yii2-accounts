@@ -15,7 +15,7 @@ class m140508_203444_accounts extends \yii\db\Migration
         * CREATE user table
         */
         $this->createTable('{{%user}}', [
-            'id' => Schema::TYPE_PK,
+            'id' => Schema::TYPE_BIGPK,
             'username' => Schema::TYPE_STRING . ' NOT NULL',
             'email' => Schema::TYPE_STRING . ' NOT NULL',
             'auth_key' => Schema::TYPE_STRING . '(32) NOT NULL',
@@ -23,9 +23,22 @@ class m140508_203444_accounts extends \yii\db\Migration
             'password_reset_token' => Schema::TYPE_STRING,
             'role' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 10',
             'status' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 10',
-            'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
-            'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'created_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
+            'updated_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
         ], $tableOptions);
+
+        /**
+        * INSERT initial account: "user:password"
+        */
+        $this->insert('{{%user}}', [
+            'username' => 'user',
+            'email' => 'user@example.com',
+            'password_hash' => '$2a$13$6Z/QJ5NCPSkvGK45ZCLnaeKk7dWh7zjihiEguQdh8fE.EEPrqEcXS',
+            'role' => '10',
+            'status' => '10',
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
     }
 
     public function down()
