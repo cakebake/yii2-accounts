@@ -3,7 +3,8 @@
 namespace cakebake\accounts\models;
 
 use Yii;
-use \yii\db\ActiveRecord;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "user".
@@ -24,7 +25,9 @@ class Account extends ActiveRecord
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
 
+    const ROLE_GUEST = 0;
     const ROLE_USER = 10;
+    const ROLE_ADMIN = 20;
 
     /**
      * @inheritdoc
@@ -38,20 +41,19 @@ class Account extends ActiveRecord
     /**
      * @inheritdoc
      */
-//    public function behaviors()
-//    {
-//        $time = date('Y-m-d H:i:s');
-//        return [
-//            'timestamp' => [
-//                'class' => 'yii\behaviors\TimestampBehavior',
-//                'attributes' => [
-//                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
-//                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-//                ],
-//                'value' => $time,
-//            ],
-//        ];
-//    }
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => 'yii\behaviors\TimestampBehavior',
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
 
     /**
      * @inheritdoc
@@ -59,16 +61,17 @@ class Account extends ActiveRecord
     public function rules()
     {
         return [
-            [['username', 'email'], 'required'],
+            [['username', 'email', 'role', 'status'], 'required'],
 
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
 
             ['role', 'default', 'value' => self::ROLE_USER],
-            ['role', 'in', 'range' => [self::ROLE_USER]],
+            ['role', 'in', 'range' => [self::ROLE_ADMIN, self::ROLE_USER, self::ROLE_GUEST]],
 
             [['role', 'status'], 'integer'],
             [['username', 'email'], 'string', 'max' => 255],
+            ['email', 'email'],
         ];
     }
 
@@ -79,7 +82,7 @@ class Account extends ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'username' => Yii::t('app', 'Usernameee'),
+            'username' => Yii::t('app', 'Username'),
             'email' => Yii::t('app', 'Email'),
             'auth_key' => Yii::t('app', 'Auth Key'),
             'password_hash' => Yii::t('app', 'Password Hash'),

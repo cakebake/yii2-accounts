@@ -1,6 +1,7 @@
 <?php
 
 use yii\db\Schema;
+use yii\db\Expression;
 
 /**
 * DATABSE SCHEMA OF THIS MODULE
@@ -36,7 +37,7 @@ class m140508_203444_accounts extends \yii\db\Migration
         /**
         * INSERT initial account: "user:password"
         */
-        $time = date('Y-m-d H:i:s');
+        $time = new Expression('NOW()');
         $this->insert('{{%user}}', [
             'username' => 'user',
             'email' => 'user@example.com',
