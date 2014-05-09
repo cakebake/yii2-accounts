@@ -3,7 +3,6 @@
 namespace cakebake\accounts\models;
 
 use Yii;
-use cakebake\accounts\models\Account;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 

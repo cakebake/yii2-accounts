@@ -21,12 +21,36 @@ use \yii\db\ActiveRecord;
  */
 class Account extends ActiveRecord
 {
+    const STATUS_DELETED = 0;
+    const STATUS_ACTIVE = 10;
+
+    const ROLE_USER = 10;
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return '{{%user}}';
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        $time = date('Y-m-d H:i:s');
+        return [
+            'timestamp' => [
+                'class' => 'yii\behaviors\TimestampBehavior',
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => $time,
+            ],
+        ];
     }
 
     /**
@@ -50,7 +74,7 @@ class Account extends ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'username' => Yii::t('app', 'Username'),
+            'username' => Yii::t('app', 'Usernameee'),
             'email' => Yii::t('app', 'Email'),
             'auth_key' => Yii::t('app', 'Auth Key'),
             'password_hash' => Yii::t('app', 'Password Hash'),
