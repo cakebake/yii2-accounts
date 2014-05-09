@@ -2,6 +2,7 @@
 
 namespace cakebake\accounts\models;
 
+use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
 use yii\helpers\Security;
@@ -32,6 +33,14 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @inheritdoc
      */
+    public static function tableName()
+    {
+        return '{{%user}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         $time = date('Y-m-d H:i:s');
@@ -58,6 +67,25 @@ class User extends ActiveRecord implements IdentityInterface
 
             ['role', 'default', 'value' => self::ROLE_USER],
             ['role', 'in', 'range' => [self::ROLE_USER]],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'username' => Yii::t('app', 'Username'),
+            'email' => Yii::t('app', 'Email'),
+            'auth_key' => Yii::t('app', 'Auth Key'),
+            'password_hash' => Yii::t('app', 'Password Hash'),
+            'password_reset_token' => Yii::t('app', 'Password Reset Token'),
+            'role' => Yii::t('app', 'Role'),
+            'status' => Yii::t('app', 'Status'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'created_at' => Yii::t('app', 'Created At'),
         ];
     }
 
