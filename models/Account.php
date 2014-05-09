@@ -66,7 +66,7 @@ class Account extends ActiveRecord
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
 
-            ['role', 'default', 'value' => self::ROLE_USER],
+            ['role', 'default', 'value' => self::ROLE_GUEST],
             ['role', 'in', 'range' => [self::ROLE_ADMIN, self::ROLE_USER, self::ROLE_GUEST]],
 
             [['role', 'status'], 'integer'],

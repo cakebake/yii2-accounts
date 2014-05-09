@@ -28,7 +28,7 @@ class m140508_203444_accounts extends \yii\db\Migration
             'auth_key' => Schema::TYPE_STRING . '(32) NOT NULL',
             'password_hash' => Schema::TYPE_STRING . ' NOT NULL',
             'password_reset_token' => Schema::TYPE_STRING,
-            'role' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 10',
+            'role' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 0',
             'status' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 10',
             'updated_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
             'created_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
