@@ -60,8 +60,16 @@ class Account extends ActiveRecord
     {
         return [
             [['username', 'email', 'auth_key', 'password_hash', 'updated_at'], 'required'],
-            [['role', 'status'], 'integer'],
+
             [['updated_at', 'created_at'], 'safe'],
+
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+
+            ['role', 'default', 'value' => self::ROLE_USER],
+            ['role', 'in', 'range' => [self::ROLE_USER]],
+
+            [['role', 'status'], 'integer'],
             [['username', 'email', 'password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32]
         ];

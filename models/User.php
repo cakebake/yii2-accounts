@@ -4,9 +4,9 @@ namespace cakebake\accounts\models;
 
 use Yii;
 use yii\base\NotSupportedException;
-use yii\db\ActiveRecord;
 use yii\helpers\Security;
 use yii\web\IdentityInterface;
+//use yii\helpers\ArrayHelper;
 
 /**
  * @inheritdoc
@@ -18,16 +18,12 @@ class User extends Account implements IdentityInterface
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
-        return [
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
-
-            ['role', 'default', 'value' => self::ROLE_USER],
-            ['role', 'in', 'range' => [self::ROLE_USER]],
-        ];
-    }
+//    public function attributeLabels() {
+//        return ArrayHelper::merge(
+//            parent::attributeLabels(), [
+//            ]
+//        );
+//    }
 
     /**
      * @inheritdoc
