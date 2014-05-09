@@ -3,6 +3,7 @@
 namespace cakebake\accounts\models;
 
 use Yii;
+use \yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "user".
@@ -18,7 +19,7 @@ use Yii;
  * @property string $updated_at
  * @property string $created_at
  */
-class Account extends \yii\db\ActiveRecord
+class Account extends ActiveRecord
 {
     /**
      * @inheritdoc

@@ -65,6 +65,7 @@ class Module extends \yii\base\Module
     */
     private function _setModelPaths() {
         $this->_models = [
+            'account' => 'cakebake\accounts\models\Account',
             'user' => 'cakebake\accounts\models\User',
             'login' => 'cakebake\accounts\models\LoginForm',
         ];
