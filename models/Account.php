@@ -38,20 +38,20 @@ class Account extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public function behaviors()
-    {
-        $time = date('Y-m-d H:i:s');
-        return [
-            'timestamp' => [
-                'class' => 'yii\behaviors\TimestampBehavior',
-                'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
-                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-                ],
-                'value' => $time,
-            ],
-        ];
-    }
+//    public function behaviors()
+//    {
+//        $time = date('Y-m-d H:i:s');
+//        return [
+//            'timestamp' => [
+//                'class' => 'yii\behaviors\TimestampBehavior',
+//                'attributes' => [
+//                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+//                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+//                ],
+//                'value' => $time,
+//            ],
+//        ];
+//    }
 
     /**
      * @inheritdoc
@@ -59,9 +59,7 @@ class Account extends ActiveRecord
     public function rules()
     {
         return [
-            [['username', 'email', 'auth_key', 'password_hash', 'updated_at'], 'required'],
-
-            [['updated_at', 'created_at'], 'safe'],
+            [['username', 'email'], 'required'],
 
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
@@ -70,8 +68,7 @@ class Account extends ActiveRecord
             ['role', 'in', 'range' => [self::ROLE_USER]],
 
             [['role', 'status'], 'integer'],
-            [['username', 'email', 'password_hash', 'password_reset_token'], 'string', 'max' => 255],
-            [['auth_key'], 'string', 'max' => 32]
+            [['username', 'email'], 'string', 'max' => 255],
         ];
     }
 
