@@ -68,6 +68,7 @@ class Module extends \yii\base\Module
             'account' => 'cakebake\accounts\models\Account',
             'user' => 'cakebake\accounts\models\User',
             'login' => 'cakebake\accounts\models\LoginForm',
+            'signup' => 'cakebake\accounts\models\SignupForm',
         ];
     }
 

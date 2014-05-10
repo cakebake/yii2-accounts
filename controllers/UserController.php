@@ -107,7 +107,7 @@ class UserController extends Controller
     */
     public function actionLogin()
     {
-        $model = $this->module->getModel('login');
+        $model = Yii::$app->getModule('accounts')->getModel('login');
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
 
             return $this->goBack();
@@ -127,6 +127,26 @@ class UserController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    /**
+    * The register action
+    */
+    public function actionSignup()
+    {
+        $model = Yii::$app->getModule('accounts')->getModel('signup');
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->signup()) {
+                if (Yii::$app->getUser()->login($user)) {
+
+                    return $this->goHome();
+                }
+            }
+        }
+
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
     }
 
     /**
