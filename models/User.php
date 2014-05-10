@@ -6,24 +6,38 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\helpers\Security;
 use yii\web\IdentityInterface;
-//use yii\helpers\ArrayHelper;
+use yii\db\ActiveRecord;
 
 /**
- * @inheritdoc
+ * This is the model class for table "user".
  *
- * User model extends Account model
+ * @property string $id
+ * @property string $username
+ * @property string $email
+ * @property string $auth_key
+ * @property string $password_hash
+ * @property string $password_reset_token
+ * @property integer $role
+ * @property integer $status
+ * @property string $updated_at
+ * @property string $created_at
  */
-class User extends Account implements IdentityInterface
+class User extends ActiveRecord implements IdentityInterface
 {
+    const STATUS_DELETED = 0;
+    const STATUS_ACTIVE = 10;
+
+    const ROLE_GUEST = 0;
+    const ROLE_USER = 10;
+    const ROLE_ADMIN = 20;
+
     /**
      * @inheritdoc
      */
-//    public function attributeLabels() {
-//        return ArrayHelper::merge(
-//            parent::attributeLabels(), [
-//            ]
-//        );
-//    }
+    public static function tableName()
+    {
+        return '{{%user}}';
+    }
 
     /**
      * @inheritdoc

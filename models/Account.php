@@ -37,7 +37,6 @@ class Account extends ActiveRecord
         return '{{%user}}';
     }
 
-
     /**
      * @inheritdoc
      */
