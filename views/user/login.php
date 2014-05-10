@@ -3,36 +3,23 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 $this->title = 'Login';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
-
 <div class="accounts-user-login">
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>Please fill out the following fields to login:</p>
-
-    <?php $form = ActiveForm::begin([
-        'id' => 'login-form',
-        'options' => ['class' => 'form-horizontal'],
-        'fieldConfig' => [
-            'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-            'labelOptions' => ['class' => 'col-lg-1 control-label'],
-        ],
-    ]); ?>
-
-    <?= $form->field($model, 'username') ?>
-
-    <?= $form->field($model, 'password')->passwordInput() ?>
-
-    <?= $form->field($model, 'rememberMe', [
-        'template' => "<div class=\"col-lg-offset-1 col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-    ])->checkbox() ?>
-
-    <div class="form-group">
-        <div class="col-lg-offset-1 col-lg-11">
-            <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <p class="panel-title"><?= Html::encode($this->title) ?></p>
+                </div>
+                <div class="panel-body">
+                    <?php $form = ActiveForm::begin(['id' => 'login-form']) ?>
+                    <?= $form->field($model, 'username') ?>
+                    <?= $form->field($model, 'password')->passwordInput()->hint('(forgot password)') ?>
+                    <?= $form->field($model, 'rememberMe')->checkbox() ?>
+                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+                    <?php ActiveForm::end(); ?>
+                </div>
+            </div>
         </div>
     </div>
-
-    <?php ActiveForm::end(); ?>
 </div>
