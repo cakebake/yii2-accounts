@@ -14,7 +14,7 @@ $this->title = 'Login';
                 <div class="panel-body">
                     <?php $form = ActiveForm::begin(['id' => 'login-form']) ?>
                     <?= $form->field($model, 'username') ?>
-                    <?= $form->field($model, 'password')->passwordInput()->hint('(forgot password)') ?>
+                    <?= $form->field($model, 'password')->passwordInput()->hint('<span class="glyphicon glyphicon-hand-right"></span> ' . Html::a('Forgot your password?', ['/accounts/user/forgot-password'])) ?>
                     <?= $form->field($model, 'rememberMe')->checkbox() ?>
                     <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
                     <?php ActiveForm::end(); ?>

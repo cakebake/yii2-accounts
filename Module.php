@@ -15,6 +15,10 @@ class Module extends \yii\base\Module
     */
     public $defaultRoute = 'user';
     /**
+    * @var string The location of the email view files. This path must end with a slash!
+    */
+    public $emailViewsPath = '@accounts/mail/';
+    /**
      * @var array Models of this module
      */
     private $_models = [];
@@ -68,6 +72,7 @@ class Module extends \yii\base\Module
             'account' => 'cakebake\accounts\models\Account',
             'user' => 'cakebake\accounts\models\User',
             'login' => 'cakebake\accounts\models\LoginForm',
+            'forgot_password' => 'cakebake\accounts\models\ForgotPasswordForm',
             'signup' => 'cakebake\accounts\models\SignupForm',
         ];
     }

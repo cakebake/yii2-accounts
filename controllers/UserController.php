@@ -17,15 +17,15 @@ class UserController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['login', 'logout', 'signup'],
+                //'only' => ['login', 'logout', 'signup', 'forgot-password'],
                 'rules' => [
                     [
-                        'actions' => ['login', 'signup'],
+                        'actions' => ['login', 'signup', 'forgot-password'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['index', 'logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -64,20 +64,20 @@ class UserController extends Controller
         if (!parent::beforeAction($action))
             return false;
 
-        switch ($action->id) {
-           case 'index':
-                if (Yii::$app->user->isGuest) {
-
-                    return $this->goLogin();
-                }
-             break;
-           case 'logout':
-                if (Yii::$app->user->isGuest) {
-
-                    return $this->goLogin();
-                }
-             break;
-        }
+//        switch ($action->id) {
+//           case 'index':
+//                if (Yii::$app->user->isGuest) {
+//
+//                    return $this->goLogin();
+//                }
+//             break;
+//           case 'logout':
+//                if (Yii::$app->user->isGuest) {
+//
+//                    return $this->goLogin();
+//                }
+//             break;
+//        }
 
         return true;
     }
@@ -105,6 +105,25 @@ class UserController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+    /**
+    * The password forgotten action
+    */
+    public function actionForgotPassword()
+    {
+        $model = Yii::$app->getModule('accounts')->getModel('forgot_password');
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail()) {
+                Yii::$app->getSession()->setFlash('success', 'Check your email for further instructions.');
+            } else {
+                Yii::$app->getSession()->setFlash('error', 'Sorry, we are unable to reset password for email provided.');
+            }
+        }
+
+        return $this->render('forgot_password', [
+            'model' => $model,
+        ]);
     }
 
     /**
