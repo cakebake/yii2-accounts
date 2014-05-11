@@ -92,18 +92,23 @@ class User extends Account implements IdentityInterface
      */
     public static function findByPasswordResetToken($token)
     {
-        $expire = 3600;
-        $parts = explode('_', $token);
-        $timestamp = (int) end($parts);
-        if ($timestamp + $expire < time()) {
-            // token expired
-            return null;
-        }
-
-        return static::findOne([
+        $user = static::findOne([
             'password_reset_token' => $token,
             'status' => self::STATUS_ACTIVE,
         ]);
+
+        if (!$user)
+            return null;
+
+        $parts = explode('_', $token);
+        if (((int)end($parts) + Yii::$app->getModule('accounts')->passwordResetTokenExpire) < time()) {
+            $user->removePasswordResetToken();
+            $user->save();
+
+            return null;
+        }
+
+        return $user;
     }
 
     /**

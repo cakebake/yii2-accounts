@@ -30,7 +30,7 @@ class ResetPasswordForm extends Model
         $model = Yii::$app->getModule('accounts')->getModel('user', false);
         $this->_user = $model::findByPasswordResetToken($token);
         if (!$this->_user) {
-            throw new InvalidParamException('Wrong password reset token.');
+            throw new InvalidParamException('Wrong or expired password reset token.');
         }
         parent::__construct($config);
     }

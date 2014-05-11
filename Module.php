@@ -10,14 +10,22 @@ class Module extends \yii\base\Module
     * @var bool Enable/Disable Login
     */
     public $loginEnabled = true;
+
     /**
     * @inheritdoc
     */
     public $defaultRoute = 'user';
+
     /**
     * @var string The location of the email view files. This path must end with a slash!
     */
     public $emailViewsPath = '@accounts/mail/';
+
+    /**
+    * @var int The time in seconds, how long the password_reset_token is valid (the link in password_forgot email)
+    */
+    public $passwordResetTokenExpire = 3600; //3600 = 1h
+
     /**
      * @var array Models of this module
      */
