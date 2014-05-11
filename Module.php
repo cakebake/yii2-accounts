@@ -73,6 +73,7 @@ class Module extends \yii\base\Module
             'user' => 'cakebake\accounts\models\User',
             'login' => 'cakebake\accounts\models\LoginForm',
             'forgot_password' => 'cakebake\accounts\models\ForgotPasswordForm',
+            'reset_password' => 'cakebake\accounts\models\ResetPasswordForm',
             'signup' => 'cakebake\accounts\models\SignupForm',
         ];
     }

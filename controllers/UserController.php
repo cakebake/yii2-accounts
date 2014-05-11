@@ -6,6 +6,7 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\BadRequestHttpException;
 
 class UserController extends Controller
 {
@@ -20,7 +21,7 @@ class UserController extends Controller
                 //'only' => ['login', 'logout', 'signup', 'forgot-password'],
                 'rules' => [
                     [
-                        'actions' => ['login', 'signup', 'forgot-password'],
+                        'actions' => ['login', 'signup', 'forgot-password', 'reset-password'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -127,6 +128,32 @@ class UserController extends Controller
     }
 
     /**
+    * The password reset action
+    *
+    * @param string $token
+    * @return {\yii\web\Response|Response|static|string}
+    */
+    public function actionResetPassword($token)
+    {
+        try {
+            $modelPath = Yii::$app->getModule('accounts')->getModel('reset_password', false);
+            $model = new $modelPath($token);
+        } catch (InvalidParamException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
+            Yii::$app->getSession()->setFlash('success', 'New password has been saved. You can use it to login now.');
+
+            return $this->goLogin(['accounts/user/index']);
+        }
+
+        return $this->render('reset_password', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
     * The logout action
     */
     public function actionLogout()
@@ -157,12 +184,25 @@ class UserController extends Controller
     }
 
     /**
-    * Redirects the browser to the login page.
+    * Redirects the browser to the login page. If the current page is not available after
+    * login, please use following param.
     *
+    * @param string|array $returnUrl the URL that the user should be redirected to after login.
+    * If an array is given, [[UrlManager::createUrl()]] will be called to create the corresponding URL.
+    * The first element of the array should be the route, and the rest of
+    * the name-value pairs are GET parameters used to construct the URL. For example,
+     *
+     * ~~~
+     * ['admin/index', 'ref' => 1]
+     * ~~~
+     *
     * @return Response the current response object
     */
-    public function goLogin()
+    public function goLogin($returnUrl=null)
     {
+        if ($returnUrl !== null) {
+            Yii::$app->getUser()->setReturnUrl($returnUrl);
+        }
         $this->redirect(['/accounts/user/login']);
     }
 

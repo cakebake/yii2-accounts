@@ -92,7 +92,7 @@ class User extends Account implements IdentityInterface
      */
     public static function findByPasswordResetToken($token)
     {
-        $expire = \Yii::$app->params['user.passwordResetTokenExpire'];
+        $expire = 3600;
         $parts = explode('_', $token);
         $timestamp = (int) end($parts);
         if ($timestamp + $expire < time()) {

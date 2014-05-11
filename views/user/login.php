@@ -7,6 +7,7 @@ $this->title = 'Login';
 <div class="accounts-user-login">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
+            <?= cakebake\accounts\widgets\Alert::widget(); ?>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <p class="panel-title"><?= Html::encode($this->title) ?></p>
