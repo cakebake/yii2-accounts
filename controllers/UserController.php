@@ -26,7 +26,7 @@ class UserController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'logout'],
+                        'actions' => ['index', 'profile', 'logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -84,11 +84,29 @@ class UserController extends Controller
     }
 
     /**
-    * The default action of this module
-    */
+     * Lists all Account models.
+     * @return mixed
+     */
     public function actionIndex()
     {
         return $this->render('index');
+    }
+
+    /**
+     * Displays a single Account model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionProfile($id=null)
+    {
+        $myID = Yii::$app->user->identity->id;
+        if ($id === null) {
+            $id = $myID;
+        }
+        return $this->render('profile', [
+            'model' => $this->findModel($id),
+            'myID' => ($id == $myID) ? $myID : null,
+        ]);
     }
 
     /**
@@ -204,6 +222,23 @@ class UserController extends Controller
             Yii::$app->getUser()->setReturnUrl($returnUrl);
         }
         $this->redirect(['/accounts/user/login']);
+    }
+
+    /**
+     * Finds the Account model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return Account the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
+        if (($model = $modelPath::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 
 }
