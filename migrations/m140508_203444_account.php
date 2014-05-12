@@ -9,7 +9,7 @@ use yii\db\Expression;
 * @version 1.0.0
 * @see http://www.yiiframework.com/doc-2.0/guide-console-migrate.html
 */
-class m140508_203444_accounts extends \yii\db\Migration
+class m140508_203444_account extends \yii\db\Migration
 {
     public function safeUp()
     {
