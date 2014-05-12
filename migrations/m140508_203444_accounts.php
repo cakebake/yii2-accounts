@@ -14,6 +14,8 @@ class m140508_203444_accounts extends \yii\db\Migration
     public function safeUp()
     {
         $tableOptions = null;
+        $time = new Expression('NOW()');
+
         if ($this->db->driverName === 'mysql') {
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB';
         }
@@ -35,9 +37,19 @@ class m140508_203444_accounts extends \yii\db\Migration
         ], $tableOptions);
 
         /**
-        * INSERT initial account: "user:password"
+        * INSERT initial accounts
         */
-        $time = new Expression('NOW()');
+        //admin:password
+        $this->insert('{{%user}}', [
+            'username' => 'admin',
+            'email' => 'admin@example.com',
+            'password_hash' => '$2a$13$6Z/QJ5NCPSkvGK45ZCLnaeKk7dWh7zjihiEguQdh8fE.EEPrqEcXS',
+            'role' => '20',
+            'status' => '10',
+            'created_at' => $time,
+            'updated_at' => $time,
+        ]);
+        //user:password
         $this->insert('{{%user}}', [
             'username' => 'user',
             'email' => 'user@example.com',
