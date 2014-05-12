@@ -46,7 +46,7 @@ class ForgotPasswordForm extends Model
         if ($user) {
             $user->generatePasswordResetToken();
             if ($user->save()) {
-                return Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'forgot_password_link', ['user' => $user])
+                return Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'forgotPassword', ['user' => $user])
                     ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
                     ->setTo($this->email)
                     ->setSubject('Password reset for ' . Yii::$app->name)

@@ -113,7 +113,7 @@ class UserController extends Controller
             }
         }
 
-        return $this->render('forgot_password', [
+        return $this->render('forgotPassword', [
             'model' => $model,
         ]);
     }
@@ -136,10 +136,10 @@ class UserController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
             Yii::$app->getSession()->setFlash('success', 'New password has been saved. You can use it to login now.');
 
-            return $this->goLogin(['accounts/user/index']);
+            return $this->goLogin(['/accounts/user/profile']);
         }
 
-        return $this->render('reset_password', [
+        return $this->render('resetPassword', [
             'model' => $model,
         ]);
     }
