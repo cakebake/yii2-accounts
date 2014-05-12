@@ -42,7 +42,6 @@ class ForgotPasswordForm extends Model
             'status' => $model::STATUS_ACTIVE,
             'email' => $this->email,
         ]);
-
         if ($user) {
             $user->generatePasswordResetToken();
             if ($user->save()) {
