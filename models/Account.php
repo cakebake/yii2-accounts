@@ -7,7 +7,7 @@ use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
- * This is the model class for table "user".
+ * This is the model class for table "account".
  *
  * @property string $id
  * @property string $username
@@ -34,7 +34,7 @@ class Account extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%user}}';
+        return '{{%account}}';
     }
 
     /**

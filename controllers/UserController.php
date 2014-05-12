@@ -18,7 +18,6 @@ class UserController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                //'only' => ['login', 'logout', 'signup', 'forgot-password'],
                 'rules' => [
                     [
                         'actions' => ['login', 'signup', 'forgot-password', 'reset-password'],
@@ -55,32 +54,6 @@ class UserController extends Controller
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function beforeAction($action)
-    {
-        if (!parent::beforeAction($action))
-            return false;
-
-//        switch ($action->id) {
-//           case 'index':
-//                if (Yii::$app->user->isGuest) {
-//
-//                    return $this->goLogin();
-//                }
-//             break;
-//           case 'logout':
-//                if (Yii::$app->user->isGuest) {
-//
-//                    return $this->goLogin();
-//                }
-//             break;
-//        }
-
-        return true;
     }
 
     /**

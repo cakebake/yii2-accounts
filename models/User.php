@@ -6,57 +6,12 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\helpers\Security;
 use yii\web\IdentityInterface;
-//use yii\db\ActiveRecord;
-//use yii\db\Expression;
 
 /**
- * This is the model class for table "user".
- *
- * @property string $id
- * @property string $username
- * @property string $email
- * @property string $auth_key
- * @property string $password_hash
- * @property string $password_reset_token
- * @property integer $role
- * @property integer $status
- * @property string $updated_at
- * @property string $created_at
+ * @inheritdoc
  */
 class User extends Account implements IdentityInterface
 {
-//    const STATUS_DELETED = 0;
-//    const STATUS_ACTIVE = 10;
-//
-//    const ROLE_GUEST = 0;
-//    const ROLE_USER = 10;
-//    const ROLE_ADMIN = 20;
-
-    /**
-     * @inheritdoc
-     */
-//    public static function tableName()
-//    {
-//        return '{{%user}}';
-//    }
-
-    /**
-     * @inheritdoc
-     */
-//    public function behaviors()
-//    {
-//        return [
-//            'timestamp' => [
-//                'class' => 'yii\behaviors\TimestampBehavior',
-//                'attributes' => [
-//                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
-//                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-//                ],
-//                'value' => new Expression('NOW()'),
-//            ],
-//        ];
-//    }
-
     private $_nicename = null;
 
     /**

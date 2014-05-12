@@ -1,6 +1,6 @@
 <?php
 
-namespace cakebake\accounts\models;
+namespace cakebake\accounts\models\form;
 
 use Yii;
 use yii\base\Model;

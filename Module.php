@@ -77,29 +77,14 @@ class Module extends \yii\base\Module
     */
     private function _setModelPaths() {
         $this->_models = [
+            //base
             'account' => 'cakebake\accounts\models\Account',
             'user' => 'cakebake\accounts\models\User',
-            'login' => 'cakebake\accounts\models\LoginForm',
-            'forgot_password' => 'cakebake\accounts\models\ForgotPasswordForm',
-            'reset_password' => 'cakebake\accounts\models\ResetPasswordForm',
-            'signup' => 'cakebake\accounts\models\SignupForm',
+            //user forms
+            'signup' => 'cakebake\accounts\models\form\SignupForm',
+            'login' => 'cakebake\accounts\models\form\LoginForm',
+            'forgot_password' => 'cakebake\accounts\models\form\ForgotPasswordForm',
+            'reset_password' => 'cakebake\accounts\models\form\ResetPasswordForm',
         ];
     }
-
-    /**
-    * put your comment there...
-    *
-    * @param string $id model ID
-    * @return string|null the model path, null if the model path does not exist
-    */
-    /*private function _getModelPath($id) {
-        $models = [
-            'user' => 'cakebake\accounts\models\User',
-        ];
-
-        if (!isset($models[$id]))
-            return null;
-
-        return $models[$id];
-    }*/
 }
