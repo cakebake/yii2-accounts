@@ -23,6 +23,14 @@ To access the module, you need to add this to your application configuration:
 
 ```php
 <?php
+    'components' => [
+        'user' => [
+            'class' => 'cakebake\accounts\components\User',
+            'identityClass' => 'cakebake\accounts\models\User',
+            'enableAutoLogin' => true,
+            'loginUrl' => ['/accounts/user/login'],
+        ],
+    ],
     ......
     'modules' => [
         'accounts' => [
