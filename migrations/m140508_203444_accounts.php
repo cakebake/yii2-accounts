@@ -23,7 +23,7 @@ class m140508_203444_accounts extends \yii\db\Migration
         /**
         * CREATE user table
         */
-        $this->createTable('{{%user}}', [
+        $this->createTable('{{%account}}', [
             'id' => Schema::TYPE_BIGPK,
             'username' => Schema::TYPE_STRING . ' NOT NULL',
             'email' => Schema::TYPE_STRING . ' NOT NULL',
@@ -40,7 +40,7 @@ class m140508_203444_accounts extends \yii\db\Migration
         * INSERT initial accounts
         */
         //admin:password
-        $this->insert('{{%user}}', [
+        $this->insert('{{%account}}', [
             'username' => 'admin',
             'email' => 'admin@example.com',
             'password_hash' => '$2a$13$6Z/QJ5NCPSkvGK45ZCLnaeKk7dWh7zjihiEguQdh8fE.EEPrqEcXS',
@@ -50,7 +50,7 @@ class m140508_203444_accounts extends \yii\db\Migration
             'updated_at' => $time,
         ]);
         //user:password
-        $this->insert('{{%user}}', [
+        $this->insert('{{%account}}', [
             'username' => 'user',
             'email' => 'user@example.com',
             'password_hash' => '$2a$13$6Z/QJ5NCPSkvGK45ZCLnaeKk7dWh7zjihiEguQdh8fE.EEPrqEcXS',
@@ -66,6 +66,6 @@ class m140508_203444_accounts extends \yii\db\Migration
         /**
         * DROP user table
         */
-        $this->dropTable('{{%user}}');
+        $this->dropTable('{{%account}}');
     }
 }
