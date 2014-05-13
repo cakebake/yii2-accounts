@@ -17,15 +17,15 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Accounts' => '',
-  'Are you sure you want to delete your account?' => 'Sind Sie sicher, dass Ihr Account gelöscht werden soll?',
-  'Auth Key' => '',
+  'Accounts' => 'Konten',
+  'Are you sure you want to delete your account?' => 'Sind Sie sicher, dass Sie Ihr Konto löschen möchten?',
+  'Auth Key' => 'Bestätigungsschlüssel',
   'Created At' => 'Erstellt am',
   'Delete' => 'Löschen',
-  'Email' => 'E-Mail',
-  'ID' => '',
-  'Password Hash' => '',
-  'Password Reset Token' => '',
+  'Email' => 'E-Mail-Adresse',
+  'ID' => 'ID',
+  'Password Hash' => 'Passwort Prüfsumme',
+  'Password Reset Token' => 'Passwort Wiederherstellungsschlüssel',
   'Role' => 'Berechtigung',
   'Status' => 'Status',
   'Update' => 'Aktualisieren',
