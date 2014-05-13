@@ -80,16 +80,16 @@ class Account extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'username' => Yii::t('app', 'Username'),
-            'email' => Yii::t('app', 'Email'),
-            'auth_key' => Yii::t('app', 'Auth Key'),
-            'password_hash' => Yii::t('app', 'Password Hash'),
-            'password_reset_token' => Yii::t('app', 'Password Reset Token'),
-            'role' => Yii::t('app', 'Role'),
-            'status' => Yii::t('app', 'Status'),
-            'updated_at' => Yii::t('app', 'Updated At'),
-            'created_at' => Yii::t('app', 'Created At'),
+            'id' => Yii::t('accounts', 'ID'),
+            'username' => Yii::t('accounts', 'Username'),
+            'email' => Yii::t('accounts', 'Email'),
+            'auth_key' => Yii::t('accounts', 'Auth Key'),
+            'password_hash' => Yii::t('accounts', 'Password Hash'),
+            'password_reset_token' => Yii::t('accounts', 'Password Reset Token'),
+            'role' => Yii::t('accounts', 'Role'),
+            'status' => Yii::t('accounts', 'Status'),
+            'updated_at' => Yii::t('accounts', 'Updated At'),
+            'created_at' => Yii::t('accounts', 'Created At'),
         ];
     }
 }

@@ -37,9 +37,8 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-
         Yii::setAlias('@accounts', $this->getBasePath());
-
+        $this->registerTranslations();
         $this->_setModelPaths();
     }
 
@@ -73,9 +72,21 @@ class Module extends \yii\base\Module
     }
 
     /**
+    * Translating module messages
+    */
+    public function registerTranslations()
+    {
+        Yii::$app->i18n->translations['accounts'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en-US',
+            'basePath' => '@accounts/messages',
+        ];
+    }
+
+    /**
     * Sets the model paths by model ID
     */
-    private function _setModelPaths() {
+    protected function _setModelPaths() {
         $this->_models = [
             //base
             'account' => 'cakebake\accounts\models\Account',

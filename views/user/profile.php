@@ -3,13 +3,10 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-/**
- * @var yii\web\View $this
- * @var app\models\Account $model
- */
-
-$this->title = Yii::$app->user->getNicename() . '´s Profile';
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Accounts'), 'url' => ['index']];
+$this->title =  Yii::t('accounts', '{nicename}´s Profile', [
+    'nicename' => Yii::$app->user->getNicename(),
+]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Accounts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="account-view">
@@ -18,11 +15,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php if ($myID == $model->id) : ?>
         <p>
-            <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-            <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
+            <?= Html::a(Yii::t('accounts', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+            <?= Html::a(Yii::t('accounts', 'Delete'), ['delete', 'id' => $model->id], [
                 'class' => 'btn btn-danger',
                 'data' => [
-                    'confirm' => Yii::t('app', 'Are you sure you want to delete your account?'),
+                    'confirm' => Yii::t('accounts', 'Are you sure you want to delete your account?'),
                     'method' => 'post',
                 ],
             ]) ?>
