@@ -107,9 +107,9 @@ class UserController extends Controller
         $model = Yii::$app->getModule('accounts')->getModel('forgot_password');
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->getSession()->setFlash('success', 'Check your email for further instructions.');
+                Yii::$app->getSession()->setFlash('success', Yii::t('accounts', 'Please check your email for further instructions.'));
             } else {
-                Yii::$app->getSession()->setFlash('error', 'Sorry, we are unable to reset password for email provided.');
+                Yii::$app->getSession()->setFlash('error', Yii::t('accounts', 'Sorry, we are unable to reset password for email provided.'));
             }
         }
 
@@ -134,7 +134,7 @@ class UserController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->getSession()->setFlash('success', 'New password has been saved. You can use it to login now.');
+            Yii::$app->getSession()->setFlash('success', Yii::t('accounts', 'New password has been saved. You can use it to login now.'));
 
             return $this->goLogin(['/accounts/user/profile']);
         }
@@ -210,7 +210,7 @@ class UserController extends Controller
         if (($model = $modelPath::findOne($id)) !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
         }
     }
 

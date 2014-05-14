@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Forgot your password?';
+$this->title =  Yii::t('accounts', 'Forgot your password?');
 ?>
 <div class="accounts-user-forgot-password">
     <div class="row">
@@ -13,10 +13,10 @@ $this->title = 'Forgot your password?';
                     <p class="panel-title"><?= Html::encode($this->title) ?></p>
                 </div>
                 <div class="panel-body">
-                    <p>Please fill out your email. A link to reset password will be sent there.</p>
+                    <p><?=  Yii::t('accounts', 'Please fill out the email for your account. A link to the password recovery will be sent there.') ?></p>
                     <?php $form = ActiveForm::begin(['id' => 'forgot-password-form']); ?>
                         <?= $form->field($model, 'email') ?>
-                        <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
+                        <?= Html::submitButton(Yii::t('accounts', 'Send'), ['class' => 'btn btn-primary']) ?>
                     <?php ActiveForm::end(); ?>
                 </div>
             </div>

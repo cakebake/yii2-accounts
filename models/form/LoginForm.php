@@ -40,7 +40,7 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError('password', 'Incorrect username or password.');
+                $this->addError('password', Yii::t('accounts', 'Incorrect username or password. Please try again.'));
             }
         }
     }
@@ -74,5 +74,17 @@ class LoginForm extends Model
         }
 
         return $this->_user;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'username' => Yii::t('accounts', 'Username'),
+            'password' => Yii::t('accounts', 'Password'),
+            'rememberMe' => Yii::t('accounts', 'Remember Me'),
+        ];
     }
 }

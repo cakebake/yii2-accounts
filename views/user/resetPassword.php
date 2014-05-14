@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Reset password';
+$this->title = Yii::t('accounts', 'Reset your password');
 ?>
 <div class="accounts-user-reset-password">
     <div class="row">
@@ -13,10 +13,10 @@ $this->title = 'Reset password';
                     <p class="panel-title"><?= Html::encode($this->title) ?></p>
                 </div>
                 <div class="panel-body">
-                    <p>Please choose your new password:</p>
+                    <p><?= Yii::t('accounts', 'Please choose your new password.') ?></p>
                     <?php $form = ActiveForm::begin(['id' => 'reset-password-form']); ?>
                         <?= $form->field($model, 'password')->passwordInput() ?>
-                        <?= Html::submitButton('Save', ['class' => 'btn btn-primary']) ?>
+                        <?= Html::submitButton(Yii::t('accounts', 'Save'), ['class' => 'btn btn-primary']) ?>
                     <?php ActiveForm::end(); ?>
                 </div>
             </div>

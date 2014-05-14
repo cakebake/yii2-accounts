@@ -25,12 +25,12 @@ class ResetPasswordForm extends Model
     public function __construct($token, $config = [])
     {
         if (empty($token) || !is_string($token)) {
-            throw new InvalidParamException('Password reset token cannot be blank.');
+            throw new InvalidParamException(Yii::t('accounts', 'Password reset token cannot be blank.'));
         }
         $model = Yii::$app->getModule('accounts')->getModel('user', false);
         $this->_user = $model::findByPasswordResetToken($token);
         if (!$this->_user) {
-            throw new InvalidParamException('Wrong or expired password reset token.');
+            throw new InvalidParamException(Yii::t('accounts', 'Wrong or expired password reset token.'));
         }
         parent::__construct($config);
     }

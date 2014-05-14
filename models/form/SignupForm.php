@@ -22,13 +22,13 @@ class SignupForm extends Model
         return [
             ['username', 'filter', 'filter' => 'trim'],
             ['username', 'required'],
-            ['username', 'unique', 'targetClass' => Yii::$app->getModule('accounts')->getModel('user', false), 'message' => 'This username has already been taken.'],
+            ['username', 'unique', 'targetClass' => Yii::$app->getModule('accounts')->getModel('user', false), 'message' => Yii::t('accounts', 'This username is already registered. Do you already have an account?')],
             ['username', 'string', 'min' => 2, 'max' => 255],
 
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-            ['email', 'unique', 'targetClass' => Yii::$app->getModule('accounts')->getModel('user', false), 'message' => 'This email address has already been taken.'],
+            ['email', 'unique', 'targetClass' => Yii::$app->getModule('accounts')->getModel('user', false), 'message' => Yii::t('accounts', 'This email is already registered. Do you already have an account?')],
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
@@ -54,5 +54,17 @@ class SignupForm extends Model
         }
 
         return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'username' => Yii::t('accounts', 'Username'),
+            'password' => Yii::t('accounts', 'Password'),
+            'email' => Yii::t('accounts', 'Email'),
+        ];
     }
 }

@@ -25,7 +25,7 @@ class ForgotPasswordForm extends Model
             ['email', 'exist',
                 'targetClass' => $model,
                 'filter' => ['status' => $model::STATUS_ACTIVE],
-                'message' => 'There is no user with such email.'
+                'message' => Yii::t('accounts', 'There is no account with this email.'),
             ],
         ];
     }
@@ -48,11 +48,21 @@ class ForgotPasswordForm extends Model
                 return Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'forgotPassword', ['user' => $user])
                     ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
                     ->setTo($this->email)
-                    ->setSubject('Password reset for ' . Yii::$app->name)
+                    ->setSubject(Yii::t('accounts', 'Password reset for {appname}', ['appname' => Yii::$app->name]))
                     ->send();
             }
         }
 
         return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'email' => Yii::t('accounts', 'Email'),
+        ];
     }
 }
