@@ -53,7 +53,6 @@ class Account extends ActiveRecord
             ],
             'actionlog' => [
                 'class' => 'cakebake\actionlog\behaviors\ActionLogBehavior',
-                //'message' => 'some feedback from action',
             ],
         ];
     }

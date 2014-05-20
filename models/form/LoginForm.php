@@ -4,6 +4,7 @@ namespace cakebake\accounts\models\form;
 
 use Yii;
 use yii\base\Model;
+use cakebake\actionlog\model\ActionLog;
 
 /**
  * LoginForm is the model behind the login form.
@@ -52,10 +53,13 @@ class LoginForm extends Model
      */
     public function login()
     {
+        $user = $this->getUser();
         if ($this->validate()) {
+            ActionLog::add('success', $user->id);
 
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+            return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
         } else {
+            ActionLog::add('error', $user->id);
 
             return false;
         }
