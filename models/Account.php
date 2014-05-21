@@ -29,6 +29,9 @@ class Account extends ActiveRecord
     const ROLE_USER = 10;
     const ROLE_ADMIN = 20;
 
+    const LOG_MESSAGE_SUCCESS = 'success';
+    const LOG_MESSAGE_ERROR = 'error';
+
     /**
      * @inheritdoc
      */

@@ -54,12 +54,14 @@ class LoginForm extends Model
     public function login()
     {
         $user = $this->getUser();
+        $model = Yii::$app->getModule('accounts')->getModel('user', false);
+
         if ($this->validate()) {
-            ActionLog::add('success', $user->id);
+            ActionLog::add(['status' => $model::LOG_MESSAGE_SUCCESS], $user->id);
 
             return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
         } else {
-            ActionLog::add('error', $user->id);
+            ActionLog::add(['status' => $model::LOG_MESSAGE_ERROR, 'info' => $user->getNicename() . ' failed login-form validation'], $user->id);
 
             return false;
         }
