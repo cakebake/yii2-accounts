@@ -57,11 +57,11 @@ class LoginForm extends Model
         $model = Yii::$app->getModule('accounts')->getModel('user', false);
 
         if ($this->validate()) {
-            ActionLog::add(['status' => $model::LOG_MESSAGE_SUCCESS], $user->id);
+            ActionLog::add(ActionLog::LOG_STATUS_INFO, null, $user->id);
 
             return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
         } else {
-            ActionLog::add(['status' => $model::LOG_MESSAGE_ERROR, 'info' => (is_object($user) ? $user->getNicename() : 'Unknown user ') . ' failed login-form validation'], is_object($user) ? $user->id : null);
+            ActionLog::add(ActionLog::LOG_STATUS_ERROR, (is_object($user) ? $user->getNicename() : 'Unknown user') . ' failed login-form validation', is_object($user) ? $user->id : null);
 
             return false;
         }

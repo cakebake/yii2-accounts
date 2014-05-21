@@ -29,6 +29,6 @@ class User extends \yii\web\User
      */
     protected function afterLogout($identity)
     {
-        ActionLog::add(['status' => $identity::LOG_MESSAGE_SUCCESS], $identity->id);
+        ActionLog::add(ActionLog::LOG_STATUS_INFO, null, $identity->id);
     }
 }
