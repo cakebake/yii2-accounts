@@ -3,6 +3,7 @@
 namespace cakebake\accounts\components;
 
 use Yii;
+use cakebake\actionlog\model\ActionLog;
 
 /**
  * @inheritdoc
@@ -21,5 +22,13 @@ class User extends \yii\web\User
         }
 
         return $default;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function afterLogout($identity)
+    {
+        ActionLog::add(['status' => $identity::LOG_MESSAGE_SUCCESS], $identity->id);
     }
 }
