@@ -7,6 +7,7 @@ use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
+use yii\web\NotFoundHttpException;
 
 class UserController extends Controller
 {
@@ -161,11 +162,13 @@ class UserController extends Controller
     {
         $model = Yii::$app->getModule('accounts')->getModel('signup');
         if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->signup()) {
-                if (Yii::$app->getUser()->login($user)) {
+            $user = $model->signup();
+            if ($user->errors) {
+                throw new BadRequestHttpException(Yii::t('accounts', 'The transferred data could not be processed.'));
+            }
+            if (Yii::$app->getUser()->login($user)) {
 
-                    return $this->goHome();
-                }
+                return $this->goHome();
             }
         }
 
