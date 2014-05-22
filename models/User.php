@@ -154,6 +154,14 @@ class User extends Account implements IdentityInterface
     }
 
     /**
+    * Default user settings on signup
+    */
+    public function setSignupDefaults() {
+        $this->status = self::STATUS_ACTIVE;
+        $this->role = self::ROLE_USER;
+    }
+
+    /**
      * Removes password reset token
      */
     public function removePasswordResetToken()

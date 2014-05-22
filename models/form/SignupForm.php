@@ -49,6 +49,8 @@ class SignupForm extends Model
             $user->email = $this->email;
             $user->setPassword($this->password);
             $user->generateAuthKey();
+            $user->setSignupDefaults();
+
             if ($user->save()) {
                 ActionLog::add(ActionLog::LOG_STATUS_INFO, $user->username . ' has successfully registered.', $user->id);
             } else {
