@@ -4,6 +4,7 @@ namespace cakebake\accounts\models\form;
 
 use Yii;
 use yii\base\Model;
+use cakebake\actionlog\model\ActionLog;
 
 /**
  * Signup form
@@ -48,10 +49,16 @@ class SignupForm extends Model
             $user->email = $this->email;
             $user->setPassword($this->password);
             $user->generateAuthKey();
-            $user->save();
+            if ($user->save()) {
+                ActionLog::add(ActionLog::LOG_STATUS_INFO, $user->username . ' has successfully registered.', $user->id);
+            } else {
+                ActionLog::add(ActionLog::LOG_STATUS_ERROR);
+            }
 
             return $user;
         }
+
+        ActionLog::add(ActionLog::LOG_STATUS_ERROR);
 
         return null;
     }
