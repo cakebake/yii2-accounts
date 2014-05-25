@@ -51,9 +51,9 @@ class Account extends ActiveRecord
                 ],
                 'value' => new Expression('NOW()'),
             ],
-            'actionlog' => [
-                'class' => 'cakebake\actionlog\behaviors\ActionLogBehavior',
-            ],
+//            'actionlog' => [
+//                'class' => 'cakebake\actionlog\behaviors\ActionLogBehavior',
+//            ],
         ];
     }
 
