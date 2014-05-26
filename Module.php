@@ -47,9 +47,10 @@ class Module extends \yii\base\Module
      *
      * @param string $id model ID
      * @param boolean $load whether to load the model if it is not yet loaded
+     * @param array $params the constructor parameters
      * @return Model|null the model instance, null if the model does not exist
      */
-    public function getModel($id, $load = true)
+    public function getModel($id, $load = true, array $params = [])
     {
         $id = strtolower($id);
 
@@ -60,8 +61,7 @@ class Module extends \yii\base\Module
                     $this->_models[$id] = ['class' => $this->_models[$id]];
                 }
 
-                //return $this->_models[$id] = Yii::createObject($this->_models[$id], [$id, $this]);
-                return $this->_models[$id] = Yii::createObject($this->_models[$id]);
+                return Yii::createObject($this->_models[$id], $params);
             } else {
 
                 return $this->_models[$id];
