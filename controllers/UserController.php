@@ -188,7 +188,7 @@ class UserController extends Controller
      *
     * @return Response the current response object
     */
-    public function goLogin($returnUrl=null)
+    public function goLogin($returnUrl = null)
     {
         if ($returnUrl !== null) {
             Yii::$app->getUser()->setReturnUrl($returnUrl);
