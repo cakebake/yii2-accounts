@@ -161,11 +161,7 @@ class UserController extends Controller
     public function actionSignup()
     {
         $model = Yii::$app->getModule('accounts')->getModel('signup');
-        if ($model->load(Yii::$app->request->post())) {
-            $user = $model->signup();
-            if ($user->errors) {
-                throw new BadRequestHttpException(Yii::t('accounts', 'The transferred data could not be processed.'));
-            }
+        if ($model->load(Yii::$app->request->post()) && ($user = $model->signup()) !== null) {
             if (Yii::$app->getUser()->login($user)) {
 
                 return $this->goHome();

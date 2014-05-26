@@ -52,15 +52,31 @@ class SignupForm extends Model
             $user->setSignupDefaults();
 
             if ($user->save()) {
-                ActionLog::add(ActionLog::LOG_STATUS_INFO, $user->username . ' has successfully registered.', $user->id);
-            } else {
-                ActionLog::add(ActionLog::LOG_STATUS_ERROR);
+                ActionLog::add(ActionLog::LOG_STATUS_INFO, [
+                    'info' => $user->username . ' has successfully registered.',
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'status' => $user->status,
+                ], $user->id);
+
+                return $user;
             }
 
-            return $user;
+            ActionLog::add(ActionLog::LOG_STATUS_ERROR, [
+                'username' => $this->username,
+                'email' => $this->email,
+                'errors' => $user->errors,
+            ]);
+
+            return null;
         }
 
-        ActionLog::add(ActionLog::LOG_STATUS_ERROR);
+        ActionLog::add(ActionLog::LOG_STATUS_ERROR, [
+            'username' => $this->username,
+            'email' => $this->email,
+            'errors' => $this->errors,
+        ]);
 
         return null;
     }
