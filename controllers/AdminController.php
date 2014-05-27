@@ -104,7 +104,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Finds the Admin model based on its primary key value.
+     * Finds the Account model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
      * @return Admin the loaded model
@@ -112,10 +112,11 @@ class AdminController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Admin::findOne($id)) !== null) {
+        $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
+        if (($model = $modelPath::findOne($id)) !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
         }
     }
 }
