@@ -7,12 +7,10 @@ use yii\helpers\Html;
  * @var cakebake\accounts\models\Admin $model
  */
 
-$this->title = Yii::t('accounts', 'Update {modelClass}: ', [
-    'modelClass' => 'Admin',
-]) . ' ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Admins'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('accounts', 'Update');
+$this->title = $model->getNicename();
+$this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Administrating user accounts'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->getNicename(), 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = Yii::t('accounts', 'Update Account');
 ?>
 <div class="admin-update">
 

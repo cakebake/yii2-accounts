@@ -7,10 +7,8 @@ use yii\helpers\Html;
  * @var cakebake\accounts\models\Admin $model
  */
 
-$this->title = Yii::t('accounts', 'Create {modelClass}', [
-    'modelClass' => 'Admin',
-]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Admins'), 'url' => ['index']];
+$this->title = Yii::t('accounts', 'Create Account');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Administrating user accounts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="admin-create">
