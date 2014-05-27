@@ -3,9 +3,11 @@
 namespace cakebake\accounts\models;
 
 use Yii;
+use \yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
- * This is the model class for table "app_account".
+ * This is the model class for table "account".
  *
  * @property string $id
  * @property string $username
@@ -18,7 +20,7 @@ use Yii;
  * @property string $updated_at
  * @property string $created_at
  */
-class Admin extends \yii\db\ActiveRecord
+class Admin extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -31,12 +33,46 @@ class Admin extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => 'yii\behaviors\TimestampBehavior',
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
+            //username
+            ['username', 'required'],
+            ['username', 'unique'],
+            ['username', 'string', 'min' => 4, 'max' => 255],
+            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/'],
+            ['username', 'filter', 'filter' => 'trim'],
+
+            //email
+            ['email', 'required'],
+            ['email', 'unique'],
+            ['email', 'email'],
+            ['email', 'string', 'min' => 4, 'max' => 255],
+            ['email', 'filter', 'filter' => 'trim'],
+
+
+
+
+            //obsolet default rules
             [['username', 'email', 'auth_key', 'password_hash', 'updated_at'], 'required'],
             [['role', 'status'], 'integer'],
-            [['updated_at', 'created_at'], 'safe'],
             [['username', 'email', 'password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32]
         ];
