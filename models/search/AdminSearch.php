@@ -16,7 +16,8 @@ class AdminSearch extends Admin
     {
         return [
             [['id', 'role', 'status'], 'integer'],
-            [['username', 'email', 'auth_key', 'password_hash', 'password_reset_token', 'updated_at', 'created_at'], 'safe'],
+            [['username', 'email'], 'string'],
+            [['username', 'email'], 'filter', 'filter' => 'trim'],
         ];
     }
 
@@ -32,6 +33,7 @@ class AdminSearch extends Admin
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['created_at' => SORT_DESC]],
         ]);
 
         if (!($this->load($params) && $this->validate())) {
@@ -42,15 +44,10 @@ class AdminSearch extends Admin
             'id' => $this->id,
             'role' => $this->role,
             'status' => $this->status,
-            'updated_at' => $this->updated_at,
-            'created_at' => $this->created_at,
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
-            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
-            ->andFilterWhere(['like', 'password_reset_token', $this->password_reset_token]);
+            ->andFilterWhere(['like', 'email', $this->email]);
 
         return $dataProvider;
     }
