@@ -19,9 +19,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <p><?= Html::a(Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success']) ?></p>
 
     <?= GridView::widget([
+        'id' => 'accounts-admin-grid',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
+            ['class' => 'yii\grid\CheckboxColumn'],
             'id',
             [
                 'attribute' => 'username',
@@ -48,6 +50,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => Html::activeDropDownList($searchModel, 'role', $searchModel->getDefinedRolesArray(), ['class' => 'form-control', 'prompt' => Yii::t('accounts', 'Please select')])
             ],
+            'updated_at:date',
+            'created_at:date',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
