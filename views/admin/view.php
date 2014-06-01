@@ -12,7 +12,7 @@ $this->title = $model->getNicename();
 $this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Administrating user accounts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="admin-view">
+<div class="accounts-admin-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -33,13 +33,27 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'username',
             'email:email',
-            'auth_key',
-            'password_hash',
+            //'auth_key',
+            //'password_hash',
             'password_reset_token',
-            'role',
-            'status',
-            'updated_at',
-            'created_at',
+            [
+                'attribute' => 'status',
+                'value' => $model->getStatus(),
+            ],
+            [
+                'attribute' => 'role',
+                'value' => $model->getRole(),
+            ],
+            [
+                'attribute' => 'updated_at',
+                'format' => 'html',
+                'value' => $model->getUpdatedTime() . ' <span class="text-muted">(' . $model->updated_at . ')</span>',
+            ],
+            [
+                'attribute' => 'created_at',
+                'format' => 'html',
+                'value' => $model->getCreatedTime() . ' <span class="text-muted">(' . $model->created_at . ')</span>',
+            ],
         ],
     ]) ?>
 

@@ -47,6 +47,8 @@ class Account extends ActiveRecord
     protected $_nicename = null;
     protected $_statusname = null;
     protected $_rolename = null;
+    protected $_updated = null;
+    protected $_created = null;
 
     /**
     * Predefined IDs ​​for the user status
@@ -210,9 +212,13 @@ class Account extends ActiveRecord
             return $this->created_at;
         }
 
+        if ($this->_created !== null) {
+            return $this->_created;
+        }
+
         $format = new Formatter;
 
-        return $format->format($this->created_at, 'RelativeTime');
+        return $this->_created = $format->format($this->created_at, 'RelativeTime');
     }
 
     /**
@@ -226,9 +232,13 @@ class Account extends ActiveRecord
             return $this->updated_at;
         }
 
+        if ($this->_updated !== null) {
+            return $this->_updated;
+        }
+
         $format = new Formatter;
 
-        return $format->format($this->updated_at, 'RelativeTime');
+        return $this->_updated = $format->format($this->updated_at, 'RelativeTime');
     }
 
     /**

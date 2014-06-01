@@ -11,7 +11,7 @@ $this->title = Yii::t('accounts', 'Create Account');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Administrating user accounts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="admin-create">
+<div class="accounts-admin-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

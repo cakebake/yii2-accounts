@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Administrating 
 $this->params['breadcrumbs'][] = ['label' => $model->getNicename(), 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('accounts', 'Update Account');
 ?>
-<div class="admin-update">
+<div class="accounts-admin-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

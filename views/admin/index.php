@@ -12,14 +12,13 @@ use yii\grid\GridView;
 $this->title = Yii::t('accounts', 'Administrating user accounts');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="admin-index">
+<div class="accounts-admin-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p><?= Html::a(Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success']) ?></p>
 
     <?= GridView::widget([
-        'id' => 'accounts-admin-grid',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
@@ -50,7 +49,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => Html::activeDropDownList($searchModel, 'role', $searchModel->getDefinedRolesArray(), ['class' => 'form-control', 'prompt' => Yii::t('accounts', 'Please select')])
             ],
-            'updated_at:RelativeTime',
             'created_at:RelativeTime',
             ['class' => 'yii\grid\ActionColumn'],
         ],
