@@ -8,7 +8,7 @@ use yii\helpers\Html;
  */
 
 $this->title = Yii::t('accounts', 'Create Account');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Administrating user accounts'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Manage accounts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="accounts-admin-create">

@@ -8,7 +8,7 @@ use yii\helpers\Html;
  */
 
 $this->title = $model->getNicename();
-$this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Administrating user accounts'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Manage accounts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->getNicename(), 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('accounts', 'Update Account');
 ?>

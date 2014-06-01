@@ -9,7 +9,7 @@ use yii\grid\GridView;
  * @var cakebake\accounts\models\search\AdminSearch $searchModel
  */
 
-$this->title = Yii::t('accounts', 'Administrating user accounts');
+$this->title = Yii::t('accounts', 'Manage accounts');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="accounts-admin-index">
