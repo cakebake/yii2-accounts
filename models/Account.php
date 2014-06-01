@@ -26,19 +26,6 @@ use yii\helpers\Security;
 class Account extends ActiveRecord
 {
     /**
-    * Predefined values ​​for the user status
-    */
-    const STATUS_DELETED = 0;
-    const STATUS_ACTIVE = 10;
-
-    /**
-    * Predefined values for the user roles
-    */
-    const ROLE_GUEST = 0;
-    const ROLE_USER = 10;
-    const ROLE_ADMIN = 20;
-
-    /**
     * @var string The user password for subsequent processing for the attribute $password_hash
     */
     public $password;
@@ -54,25 +41,44 @@ class Account extends ActiveRecord
     public $oldPassword;
 
     /**
+    * Predefined IDs ​​for the user status
+    *
     * @return array Return the defined status values
     */
+    const STATUS_DELETED = 0;
+    const STATUS_ACTIVE = 10;
+    const STATUS_INACTIVE = 15;
+    const STATUS_BANNED = 20;
+
     public static function getDefinedStatusArray()
     {
         return [
             self::STATUS_ACTIVE => Yii::t('accounts', 'Active account'),
+            self::STATUS_INACTIVE => Yii::t('accounts', 'Inactive account'),
+            self::STATUS_BANNED => Yii::t('accounts', 'Banned account'),
             self::STATUS_DELETED => Yii::t('accounts', 'Deleted account'),
         ];
     }
 
     /**
+    * Predefined IDs for the user roles
+    *
     * @return array Return the defined roles values
     */
+    const ROLE_GUEST = 0;
+    const ROLE_USER = 10;
+    const ROLE_MOD = 15;
+    const ROLE_ADMIN = 20;
+    const ROLE_SUPERADMIN = 25;
+
     public static function getDefinedRolesArray()
     {
         return [
             self::ROLE_GUEST => Yii::t('accounts', 'No account'),
             self::ROLE_USER => Yii::t('accounts', 'Default account'),
-            self::ROLE_ADMIN => Yii::t('accounts', 'Administrative account'),
+            self::ROLE_MOD => Yii::t('accounts', 'Moderator account'),
+            self::ROLE_ADMIN => Yii::t('accounts', 'Admin account'),
+            self::ROLE_SUPERADMIN => Yii::t('accounts', 'Superadmin account'),
         ];
     }
 
