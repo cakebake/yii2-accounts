@@ -43,9 +43,13 @@ class Admin extends Account
             ['rePassword', 'string', 'min' => 6, 'max' => 60],
             ['rePassword', 'compare', 'compareAttribute' => 'password', 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
 
-            //obsolet default rules
-            [['role', 'status'], 'integer'],
-            [['password_hash'], 'string', 'max' => 255],
+            //status
+            ['status', 'required'],
+            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray())],
+
+            //role
+            ['role', 'required'],
+            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray())],
         ];
     }
 

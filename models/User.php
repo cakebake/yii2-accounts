@@ -7,12 +7,39 @@ use yii\base\NotSupportedException;
 use yii\helpers\Security;
 use yii\web\IdentityInterface;
 
+use cakebake\accounts\models\Account;
+
 /**
+ * This is the model class for user actions and user identity of this module
+ *
  * @inheritdoc
  */
 class User extends Account implements IdentityInterface
 {
+    /**
+    * @var string Nicename value cache
+    */
     private $_nicename = null;
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['username', 'email', 'role', 'status'], 'required'],
+
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+
+            ['role', 'default', 'value' => self::ROLE_GUEST],
+            ['role', 'in', 'range' => [self::ROLE_ADMIN, self::ROLE_USER, self::ROLE_GUEST]],
+
+            [['role', 'status'], 'integer'],
+            [['username', 'email'], 'string', 'max' => 255],
+            ['email', 'email'],
+        ];
+    }
 
     /**
     * Get users Nicename

@@ -67,6 +67,8 @@ class AdminController extends Controller
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'definedStatus' => $model->getDefinedStatusArray(),
+                'definedRoles' => $model->getDefinedRolesArray(),
             ]);
         }
     }
@@ -86,6 +88,8 @@ class AdminController extends Controller
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'definedStatus' => $model->getDefinedStatusArray(),
+                'definedRoles' => $model->getDefinedRolesArray(),
             ]);
         }
     }

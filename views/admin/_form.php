@@ -18,13 +18,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => 60]) ?>
 
+    <?= $form->field($model, 'status')->dropDownList($definedStatus, ['prompt' => Yii::t('accounts', 'Please select')]) ?>
+
+    <?= $form->field($model, 'role')->dropDownList($definedRoles, ['prompt' => Yii::t('accounts', 'Please select')]) ?>
+
     <?= $form->field($model, 'password')->textInput(['maxlength' => 60])->passwordInput() ?>
 
     <?= $form->field($model, 'rePassword')->textInput(['maxlength' => 60])->passwordInput() ?>
-
-    <?= $form->field($model, 'role')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('accounts', 'Create') : Yii::t('accounts', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

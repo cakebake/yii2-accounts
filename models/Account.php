@@ -24,9 +24,15 @@ use yii\db\Expression;
  */
 class Account extends ActiveRecord
 {
+    /**
+    * Predefined values ​​for the user status
+    */
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
 
+    /**
+    * Predefined values for the user roles
+    */
     const ROLE_GUEST = 0;
     const ROLE_USER = 10;
     const ROLE_ADMIN = 20;
@@ -45,6 +51,29 @@ class Account extends ActiveRecord
     * @var string To check the user identity, before changing secure data
     */
     public $oldPassword;
+
+    /**
+    * @return array Return the defined status values
+    */
+    public static function getDefinedStatusArray()
+    {
+        return [
+            self::STATUS_ACTIVE => Yii::t('accounts', 'Active account'),
+            self::STATUS_DELETED => Yii::t('accounts', 'Deleted account'),
+        ];
+    }
+
+    /**
+    * @return array Return the defined roles values
+    */
+    public static function getDefinedRolesArray()
+    {
+        return [
+            self::ROLE_GUEST => Yii::t('accounts', 'No account'),
+            self::ROLE_USER => Yii::t('accounts', 'Default account'),
+            self::ROLE_ADMIN => Yii::t('accounts', 'Administrative account'),
+        ];
+    }
 
     /**
      * @inheritdoc
@@ -70,26 +99,6 @@ class Account extends ActiveRecord
             ],
         ];
     }
-
-    /**
-     * @inheritdoc
-     */
-//    public function rules()
-//    {
-//        return [
-//            [['username', 'email', 'role', 'status'], 'required'],
-//
-//            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-//            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
-//
-//            ['role', 'default', 'value' => self::ROLE_GUEST],
-//            ['role', 'in', 'range' => [self::ROLE_ADMIN, self::ROLE_USER, self::ROLE_GUEST]],
-//
-//            [['role', 'status'], 'integer'],
-//            [['username', 'email'], 'string', 'max' => 255],
-//            ['email', 'email'],
-//        ];
-//    }
 
     /**
      * @inheritdoc
