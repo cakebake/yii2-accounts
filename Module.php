@@ -91,6 +91,8 @@ class Module extends \yii\base\Module
             //base
             'account' => 'cakebake\accounts\models\Account',
             'user' => 'cakebake\accounts\models\User',
+            'admin' => 'cakebake\accounts\models\Admin',
+            'admin_search' => 'cakebake\accounts\models\search\AdminSearch',
             //user forms
             'signup' => 'cakebake\accounts\models\form\SignupForm',
             'login' => 'cakebake\accounts\models\form\LoginForm',

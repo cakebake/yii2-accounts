@@ -41,6 +41,11 @@ class Account extends ActiveRecord
     public $oldPassword;
 
     /**
+    * @var string Nicename value cache
+    */
+    private $_nicename = null;
+
+    /**
     * Predefined IDs ​​for the user status
     *
     * @return array Return the defined status values
@@ -121,6 +126,30 @@ class Account extends ActiveRecord
         }
 
         return true;
+    }
+
+    /**
+    * Get users Nicename
+    *
+    * @param string|null $default The default value
+    */
+    public function getNicename($default = null)
+    {
+        if ($this->_nicename === null) {
+            $attributes = [
+                'username',
+                'email',
+            ];
+            foreach ($attributes as $attr) {
+                if (is_object($this) && !empty($this->$attr)) {
+                    return $this->_nicename = $this->$attr;
+                }
+            }
+
+            return $this->_nicename = $default;
+        }
+
+        return $this->_nicename;
     }
 
     /**

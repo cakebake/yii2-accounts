@@ -17,11 +17,6 @@ use cakebake\accounts\models\Account;
 class User extends Account implements IdentityInterface
 {
     /**
-    * @var string Nicename value cache
-    */
-    private $_nicename = null;
-
-    /**
      * @inheritdoc
      */
     public function rules()
@@ -39,30 +34,6 @@ class User extends Account implements IdentityInterface
             [['username', 'email'], 'string', 'max' => 255],
             ['email', 'email'],
         ];
-    }
-
-    /**
-    * Get users Nicename
-    *
-    * @param string|null $default The default value
-    */
-    public function getNicename($default = null)
-    {
-        if ($this->_nicename === null) {
-            $attributes = [
-                'username',
-                'email',
-            ];
-            foreach ($attributes as $attr) {
-                if (is_object($this) && !empty($this->$attr)) {
-                    return $this->_nicename = $this->$attr;
-                }
-            }
-
-            return $this->_nicename = $default;
-        }
-
-        return $this->_nicename;
     }
 
     /**

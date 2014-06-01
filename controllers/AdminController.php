@@ -3,8 +3,6 @@
 namespace cakebake\accounts\controllers;
 
 use Yii;
-use cakebake\accounts\models\Admin;
-use cakebake\accounts\models\search\AdminSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -43,7 +41,7 @@ class AdminController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new AdminSearch;
+        $searchModel = Yii::$app->getModule('accounts')->getModel('admin_search');
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
@@ -71,7 +69,7 @@ class AdminController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Admin;
+        $model = Yii::$app->getModule('accounts')->getModel('admin');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -123,7 +121,7 @@ class AdminController extends Controller
      */
     protected function findModel($id)
     {
-        $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
+        $modelPath = Yii::$app->getModule('accounts')->getModel('admin', false);
         if (($model = $modelPath::findOne($id)) !== null) {
             return $model;
         } else {
