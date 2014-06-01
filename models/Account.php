@@ -41,9 +41,11 @@ class Account extends ActiveRecord
     public $oldPassword;
 
     /**
-    * @var string Nicename value cache
+    * Cache vars
     */
-    private $_nicename = null;
+    protected $_nicename = null;
+    protected $_statusname = null;
+    protected $_rolename = null;
 
     /**
     * Predefined IDs ​​for the user status
@@ -58,10 +60,10 @@ class Account extends ActiveRecord
     public static function getDefinedStatusArray()
     {
         return [
-            self::STATUS_ACTIVE => Yii::t('accounts', 'Active account'),
-            self::STATUS_INACTIVE => Yii::t('accounts', 'Inactive account'),
-            self::STATUS_BANNED => Yii::t('accounts', 'Banned account'),
-            self::STATUS_DELETED => Yii::t('accounts', 'Deleted account'),
+            self::STATUS_ACTIVE => Yii::t('accounts', 'Active'),
+            self::STATUS_INACTIVE => Yii::t('accounts', 'Inactive'),
+            self::STATUS_BANNED => Yii::t('accounts', 'Banned'),
+            self::STATUS_DELETED => Yii::t('accounts', 'Deleted'),
         ];
     }
 
@@ -79,11 +81,11 @@ class Account extends ActiveRecord
     public static function getDefinedRolesArray()
     {
         return [
-            self::ROLE_GUEST => Yii::t('accounts', 'No account'),
-            self::ROLE_USER => Yii::t('accounts', 'Default account'),
-            self::ROLE_MOD => Yii::t('accounts', 'Moderator account'),
-            self::ROLE_ADMIN => Yii::t('accounts', 'Admin account'),
-            self::ROLE_SUPERADMIN => Yii::t('accounts', 'Superadmin account'),
+            self::ROLE_GUEST => Yii::t('accounts', 'Guest'),
+            self::ROLE_USER => Yii::t('accounts', 'User'),
+            self::ROLE_MOD => Yii::t('accounts', 'Moderator'),
+            self::ROLE_ADMIN => Yii::t('accounts', 'Admin'),
+            self::ROLE_SUPERADMIN => Yii::t('accounts', 'Superadmin'),
         ];
     }
 
@@ -126,6 +128,50 @@ class Account extends ActiveRecord
         }
 
         return true;
+    }
+
+    /**
+    * Get the status name by status id
+    *
+    * @param int|null $id The optional status id
+    */
+    public function getStatus($id = null)
+    {
+        if ($id === null && isset($this->status)) {
+            $id = $this->status;
+        }
+
+        if ($id === null)
+            return null;
+
+        $statusArray = $this->getDefinedStatusArray();
+
+        if (!isset($statusArray[$id]))
+            return null;
+
+        return $statusArray[$id];
+    }
+
+    /**
+    * Get the role name by role id
+    *
+    * @param int|null $id The optional role id
+    */
+    public function getRole($id = null)
+    {
+        if ($id === null && isset($this->role)) {
+            $id = $this->role;
+        }
+
+        if ($id === null)
+            return null;
+
+        $rolesArray = $this->getDefinedRolesArray();
+
+        if (!isset($rolesArray[$id]))
+            return null;
+
+        return $rolesArray[$id];
     }
 
     /**

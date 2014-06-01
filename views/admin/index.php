@@ -23,10 +23,31 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             'id',
-            'username',
+            [
+                'attribute' => 'username',
+                'format' => 'html',
+                'value' => function ($model)
+                {
+                    return Html::a($model['username'], ['view', 'id' => $model['id']]);
+                }
+            ],
             'email:email',
-            'role',
-            'status',
+            [
+                'attribute' => 'status',
+                'value' => function ($model)
+                {
+                    return $model->getStatus();
+                },
+                'filter' => Html::activeDropDownList($searchModel, 'status', $searchModel->getDefinedStatusArray(), ['class' => 'form-control', 'prompt' => Yii::t('accounts', 'Please select')])
+            ],
+            [
+                'attribute' => 'role',
+                'value' => function ($model)
+                {
+                    return $model->getRole();
+                },
+                'filter' => Html::activeDropDownList($searchModel, 'role', $searchModel->getDefinedRolesArray(), ['class' => 'form-control', 'prompt' => Yii::t('accounts', 'Please select')])
+            ],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

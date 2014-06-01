@@ -5,6 +5,7 @@ namespace cakebake\accounts\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+
 use cakebake\accounts\models\Admin;
 
 /**
@@ -29,7 +30,7 @@ class AdminSearch extends Admin
 
     public function search($params)
     {
-        $query = Admin::find();
+        $query = self::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
