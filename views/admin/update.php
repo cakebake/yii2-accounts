@@ -18,8 +18,6 @@ $this->params['breadcrumbs'][] = Yii::t('accounts', 'Update Account');
 
     <?= $this->render('_form', [
         'model' => $model,
-        'definedStatus' => $definedStatus,
-        'definedRoles' => $definedRoles,
     ]) ?>
 
 </div>

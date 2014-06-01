@@ -155,38 +155,12 @@ class User extends Account implements IdentityInterface
     }
 
     /**
-     * Generates password hash from password and sets it to the model
-     *
-     * @param string $password
-     */
-    public function setPassword($password)
-    {
-        $this->password_hash = Security::generatePasswordHash($password);
-    }
-
-    /**
-     * Generates "remember me" authentication key
-     */
-    public function generateAuthKey()
-    {
-        $this->auth_key = Security::generateRandomKey();
-    }
-
-    /**
-     * Generates new password reset token
-     */
-    public function generatePasswordResetToken()
-    {
-        $this->password_reset_token = Security::generateRandomKey() . '_' . time();
-    }
-
-    /**
     * Default user settings on signup
     */
-    public function setSignupDefaults() {
-        $this->status = self::STATUS_ACTIVE;
-        $this->role = self::ROLE_USER;
-    }
+//    public function setSignupDefaults() {
+//        $this->status = self::STATUS_ACTIVE;
+//        $this->role = self::ROLE_USER;
+//    }
 
     /**
      * Removes password reset token

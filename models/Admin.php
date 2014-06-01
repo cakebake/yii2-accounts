@@ -56,6 +56,19 @@ class Admin extends Account
     /**
      * @inheritdoc
      */
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert))
+            return false;
+
+        //empty for now
+
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return ArrayHelper::merge(

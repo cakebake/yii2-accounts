@@ -18,9 +18,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => 60]) ?>
 
-    <?= $form->field($model, 'status')->dropDownList($definedStatus, ['prompt' => Yii::t('accounts', 'Please select')]) ?>
+    <?= $form->field($model, 'status')->dropDownList($model->getDefinedStatusArray(), ['prompt' => Yii::t('accounts', 'Please select')]) ?>
 
-    <?= $form->field($model, 'role')->dropDownList($definedRoles, ['prompt' => Yii::t('accounts', 'Please select')]) ?>
+    <?= $form->field($model, 'role')->dropDownList($model->getDefinedRolesArray(), ['prompt' => Yii::t('accounts', 'Please select')]) ?>
 
     <?= $form->field($model, 'password')->textInput(['maxlength' => 60])->passwordInput() ?>
 
