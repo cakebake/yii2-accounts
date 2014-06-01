@@ -6,6 +6,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\helpers\Security;
+use yii\base\Formatter;
 
 /**
  * This is the default model class for table "account".
@@ -196,6 +197,38 @@ class Account extends ActiveRecord
         }
 
         return $this->_nicename;
+    }
+
+    /**
+    * Formats the timestamp as the time interval between created_at time and now in human readable form.
+    *
+    * @param bool $readable Get created_at as DateTime or readable
+    */
+    public function getCreatedTime($readable = true)
+    {
+        if (!$readable) {
+            return $this->created_at;
+        }
+
+        $format = new Formatter;
+
+        return $format->format($this->created_at, 'RelativeTime');
+    }
+
+    /**
+    * Formats the timestamp as the time interval between updated_at time and now in human readable form.
+    *
+    * @param bool $readable Get updated_at as DateTime or readable
+    */
+    public function getUpdatedTime($readable = true)
+    {
+        if (!$readable) {
+            return $this->updated_at;
+        }
+
+        $format = new Formatter;
+
+        return $format->format($this->updated_at, 'RelativeTime');
     }
 
     /**

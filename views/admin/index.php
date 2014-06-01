@@ -50,8 +50,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => Html::activeDropDownList($searchModel, 'role', $searchModel->getDefinedRolesArray(), ['class' => 'form-control', 'prompt' => Yii::t('accounts', 'Please select')])
             ],
-            'updated_at:date',
-            'created_at:date',
+            'updated_at:RelativeTime',
+            'created_at:RelativeTime',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
