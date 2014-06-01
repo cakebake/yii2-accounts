@@ -16,9 +16,22 @@ class AdminSearch extends Admin
     public function rules()
     {
         return [
-            [['id', 'role', 'status'], 'integer'],
-            [['username', 'email'], 'string'],
-            [['username', 'email'], 'filter', 'filter' => 'trim'],
+            //id
+            ['id', 'integer'],
+
+            //username
+            ['username', 'string'],
+            ['username', 'filter', 'filter' => 'trim'],
+
+            //email
+            ['email', 'string'],
+            ['email', 'filter', 'filter' => 'trim'],
+
+            //status
+            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray())],
+
+            //role
+            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray())],
         ];
     }
 
