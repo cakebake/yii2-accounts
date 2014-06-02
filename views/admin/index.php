@@ -16,9 +16,20 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p><?= Html::a(Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success']) ?></p>
+    <p>
+        <?= Html::a(Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('accounts', 'Delete Selected'), ['delete-selected'], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => Yii::t('accounts', 'Are you sure you want to delete these items?'),
+                'method' => 'post',
+            ],
+            'onclick' => 'alert("TODO")',
+        ]) ?>
+    </p>
 
     <?= GridView::widget([
+        'id' => 'accounts-admin-grid',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [

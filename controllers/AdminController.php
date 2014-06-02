@@ -20,7 +20,7 @@ class AdminController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'delete-selected'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -108,6 +108,27 @@ class AdminController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+    * Deletes one or more existring Admin models
+    * If deletion is successful, the browser will be redirected to the 'index' page.
+    * @param array $ids
+    * @return {\yii\web\Response|Response|static}
+    */
+    public function actionDeleteSelected($ids)
+    {
+        if (!is_array($ids)) {
+            return false;
+        }
+
+        $models = $this->findModel($ids);
+
+        foreach ($models as $model) {
+            $model->delete();
+        }
 
         return $this->redirect(['index']);
     }
