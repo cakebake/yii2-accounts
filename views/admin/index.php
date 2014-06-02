@@ -19,12 +19,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a(Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success']) ?>
         <?= Html::a(Yii::t('accounts', 'Delete Selected'), ['delete-selected'], [
+            'id' => 'delete-selected',
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => Yii::t('accounts', 'Are you sure you want to delete these items?'),
-                'method' => 'post',
+                //'method' => 'post',
             ],
-            'onclick' => 'alert("TODO")',
         ]) ?>
     </p>
 
@@ -66,3 +66,19 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 
 </div>
+
+<?php $this->registerJs("
+    jQuery('#delete-selected').click(function(event){
+        event.preventDefault();
+        var keys = jQuery('#accounts-admin-grid').yiiGridView('getSelectedRows');
+        if (keys.length !== 0) {
+            jQuery.ajax({
+                url: jQuery(this).attr('href'),
+                data: {ids: keys}
+            });
+        } else {
+            alert('" . Yii::t('accounts', 'No items were selected.') . "');
+            return false;
+        }
+    });
+"); ?>

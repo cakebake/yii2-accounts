@@ -16,16 +16,16 @@ class AdminController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'delete-selected'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
+//            'access' => [
+//                'class' => AccessControl::className(),
+//                'rules' => [
+//                    [
+//                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'delete-selected'],
+//                        'allow' => true,
+//                        'roles' => ['@'],
+//                    ],
+//                ],
+//            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -118,7 +118,7 @@ class AdminController extends Controller
     * @param array $ids
     * @return {\yii\web\Response|Response|static}
     */
-    public function actionDeleteSelected($ids)
+    public function actionDeleteSelected(array $ids)
     {
         if (!is_array($ids)) {
             return false;
@@ -143,7 +143,14 @@ class AdminController extends Controller
     protected function findModel($id)
     {
         $modelPath = Yii::$app->getModule('accounts')->getModel('admin', false);
-        if (($model = $modelPath::findOne($id)) !== null) {
+
+        if (is_array($id)) {
+            $model = $modelPath::find()->where(['id' => $id])->all();
+        } else {
+            $model = $modelPath::findOne($id);
+        }
+
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
