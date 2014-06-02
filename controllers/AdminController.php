@@ -16,20 +16,21 @@ class AdminController extends Controller
     public function behaviors()
     {
         return [
-//            'access' => [
-//                'class' => AccessControl::className(),
-//                'rules' => [
-//                    [
-//                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'delete-selected'],
-//                        'allow' => true,
-//                        'roles' => ['@'],
-//                    ],
-//                ],
-//            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'delete-selected'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                    'delete-selected' => ['post'],
                 ],
             ],
         ];
@@ -120,6 +121,7 @@ class AdminController extends Controller
     */
     public function actionDeleteSelected(array $ids)
     {
+        DebugBreak();
         if (!is_array($ids)) {
             return false;
         }
