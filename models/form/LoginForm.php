@@ -61,7 +61,7 @@ class LoginForm extends Model
 
             return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
         } else {
-            ActionLog::add(ActionLog::LOG_STATUS_ERROR, (is_object($user) ? $user->getNicename() : 'Unknown user') . ' failed login-form validation', is_object($user) ? $user->id : null);
+            ActionLog::add(ActionLog::LOG_STATUS_ERROR, (is_object($user) ? $user->getNicename() : 'Unknown user') . ' failed login-form validation', is_object($user) ? $user->id : 0);
 
             return false;
         }
