@@ -22,10 +22,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'class' => 'accounts-admin-grid-bulk-action btn btn-danger',
             'data' => [
                 'confirm' => Yii::t('accounts', 'Are you sure you want to delete these items?'),
-                'method' => 'post',
+                //'method' => 'post',
             ],
         ]) ?>
     </p>
+
+    <?= cakebake\accounts\widgets\Alert::widget(); ?>
 
     <?= GridView::widget([
         'id' => 'accounts-admin-grid',
@@ -67,18 +69,28 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php $this->registerJs("
-    jQuery('.accounts-admin-grid-bulk-action').click(function(event){
-        event.preventDefault();
-        var keys = jQuery('#accounts-admin-grid').yiiGridView('getSelectedRows');
-        if (keys.length !== 0) {
-            jQuery.ajax({
-                url: jQuery(this).attr('href'),
-                type: 'post',
-                data: {_csrf: yii.getCsrfToken(), ids: keys}
-            });
-        } else {
-            alert('" . Yii::t('accounts', 'No items were selected.') . "');
-            return false;
-        }
-    });
+$(document).on('click', '.accounts-admin-grid-bulk-action', function(e){
+    e.preventDefault();
+    var keys = $('#accounts-admin-grid').yiiGridView('getSelectedRows');
+
+    if (keys.length == 0) {
+        alert('" . Yii::t('accounts', 'No items were selected.') . "');
+        return false;
+    } else {
+        $.ajax({
+            url: $(this).attr('href'),
+            type: 'POST',
+            data: {
+                _csrf: yii.getCsrfToken(),
+                ids: keys
+            },
+            success: function(data) {
+                console.log(data);
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        });
+    }
+});
 "); ?>

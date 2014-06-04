@@ -116,20 +116,27 @@ class AdminController extends Controller
     /**
     * Deletes one or more existring Admin models
     * If deletion is successful, the browser will be redirected to the 'index' page.
-    * @param array $ids
     * @return {\yii\web\Response|Response|static}
     */
-    public function actionDeleteSelected(array $ids)
+    public function actionDeleteSelected()
     {
-        DebugBreak();
-        if (!is_array($ids)) {
-            return false;
-        }
+        $post = Yii::$app->request->post();
 
-        $models = $this->findModel($ids);
+        if (empty($post) || !isset($post['ids']) || !is_array($post['ids']) || empty($post['ids']))
+            return $this->redirect(['index']);
 
-        foreach ($models as $model) {
-            $model->delete();
+        $models = $this->findModel($post['ids']);
+
+        foreach ($models as $k => $model) {
+            if ($model->delete()) {
+                Yii::$app->getSession()->setFlash('success-'.$k, Yii::t('accounts', '{nicename}´s account has been deleted successfully.', [
+                    'nicename' => $model->getNicename(),
+                ]));
+            } else {
+                Yii::$app->getSession()->setFlash('error-'.$k, Yii::t('accounts', 'Sorry, we are unable to delete account for user {nicename}.', [
+                    'nicename' => $model->getNicename(),
+                ]));
+            }
         }
 
         return $this->redirect(['index']);
