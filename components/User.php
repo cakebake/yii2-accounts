@@ -11,13 +11,28 @@ use cakebake\actionlog\model\ActionLog;
 class User extends \yii\web\User
 {
     /**
+     * @inheritdoc
+     */
+    public $identityClass = 'cakebake\accounts\models\User';
+
+    /**
+     * @inheritdoc
+     */
+    public $enableAutoLogin = true;
+
+    /**
+     * @inheritdoc
+     */
+    public $loginUrl = ['/accounts/user/login'];
+
+    /**
     * Get users Nicename
     *
     * @param string|null $default The default value
     */
     public function getNicename($default = null)
     {
-        if ($user = $this->getIdentity()) {
+        if (($user = $this->getIdentity()) !== false) {
             return $user->getNicename($default);
         }
 
