@@ -32,7 +32,7 @@ class User extends \yii\web\User
     */
     public function getNicename($default = null)
     {
-        if (($user = $this->getIdentity()) !== false) {
+        if ($user = $this->getIdentity()) {
             return $user->getNicename($default);
         }
 
