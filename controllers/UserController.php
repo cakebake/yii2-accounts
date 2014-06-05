@@ -26,7 +26,7 @@ class UserController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'profile', 'logout'],
+                        'actions' => ['index', 'logout', 'profile', 'profile-update'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -81,6 +81,24 @@ class UserController extends Controller
             'model' => $this->findModel($id),
             'myID' => ($id == $myID) ? $myID : null,
         ]);
+    }
+
+    /**
+     * Updates an existing user model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionProfileUpdate()
+    {
+        $model = Yii::$app->user->identity;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['profile']);
+        } else {
+            return $this->render('profileUpdate', [
+                'model' => $model,
+            ]);
+        }
     }
 
     /**
