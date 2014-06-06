@@ -17,6 +17,11 @@ class Module extends \yii\base\Module
     public $emailViewsPath = '@accounts/mail/';
 
     /**
+    * @var int The time in seconds, how long the password_reset_token is valid (the link in password_forgot email)
+    */
+    public $passwordResetTokenExpire = 3600; //3600 = 1h
+
+    /**
      * @var array Models of this module
      */
     private $_models = [];
@@ -78,6 +83,7 @@ class Module extends \yii\base\Module
     */
     protected function _setModelPaths() {
         $this->_models = [
+            'user' => 'cakebake\accounts\models\User',
         ];
     }
 }
