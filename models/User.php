@@ -5,6 +5,7 @@ namespace cakebake\accounts\models;
 use Yii;
 use yii\web\IdentityInterface;
 use yii\db\ActiveRecord;
+use yii\data\ActiveDataProvider;
 use yii\base\NotSupportedException;
 use yii\base\Formatter;
 use yii\helpers\Security;
@@ -163,6 +164,37 @@ class User extends ActiveRecord implements IdentityInterface
                 'value' => new Expression('NOW()'),
             ],
         ];
+    }
+
+    /**
+    * Search method for User model
+    *
+    * @param mixed $params
+    * @return ActiveDataProvider
+    */
+    public function search($params)
+    {
+        $query = self::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => ['defaultOrder' => ['created_at' => SORT_DESC]],
+        ]);
+
+        if (!($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'role' => $this->role,
+            'status' => $this->status,
+        ]);
+
+        $query->andFilterWhere(['like', 'username', $this->username])
+            ->andFilterWhere(['like', 'email', $this->email]);
+
+        return $dataProvider;
     }
 
     /**
