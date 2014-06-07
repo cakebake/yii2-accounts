@@ -5,6 +5,7 @@ namespace cakebake\accounts\models;
 use Yii;
 use yii\web\IdentityInterface;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 use yii\data\ActiveDataProvider;
 use yii\base\NotSupportedException;
 use yii\base\Formatter;
@@ -42,13 +43,19 @@ class User extends ActiveRecord implements IdentityInterface
     public $oldPassword;
 
     /**
-    * Cache vars
+    * @var bool The remember me checkbox value
     */
-    protected $_nicename = null;
-    protected $_statusname = null;
-    protected $_rolename = null;
-    protected $_updated = null;
-    protected $_created = null;
+    public $rememberMe = true;
+
+    /**
+    * Cache
+    */
+    private $_user = null;
+    private $_nicename = null;
+    private $_statusname = null;
+    private $_rolename = null;
+    private $_updated = null;
+    private $_created = null;
 
     /**
     * Predefined IDs ​​for the user status
@@ -99,38 +106,91 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             //username
-            ['username', 'required'],
-            ['username', 'unique'],
-            ['username', 'string', 'min' => 4, 'max' => 60],
-            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'message' => Yii::t('accounts', 'Username must consist of letters, numbers, underscores and dashes only.')],
-            ['username', 'filter', 'filter' => 'trim'],
+            ['username', 'required', 'on' => ['login']],
+//            ['username', 'unique'],
+            ['username', 'string', 'min' => 4, 'max' => 60, 'on' => ['login']],
+//            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'message' => Yii::t('accounts', 'Username must consist of letters, numbers, underscores and dashes only.')],
+            ['username', 'filter', 'filter' => 'trim', 'on' => ['login']],
 
             //email
-            ['email', 'required'],
-            ['email', 'unique'],
-            ['email', 'email'],
-            ['email', 'string', 'min' => 4, 'max' => 60],
-            ['email', 'filter', 'filter' => 'trim'],
+//            ['email', 'required'],
+//            ['email', 'unique'],
+//            ['email', 'email'],
+//            ['email', 'string', 'min' => 4, 'max' => 60],
+//            ['email', 'filter', 'filter' => 'trim'],
 
             //password
-            ['password', 'required'],
-            ['password', 'string', 'min' => 6, 'max' => 60],
+            ['password', 'required', 'on' => ['login']],
+            ['password', 'string', 'min' => 6, 'max' => 60, 'on' => ['login']],
+            ['password', 'validateLogin', 'on' => ['login']],
 
             //rePassword
-            ['rePassword', 'required'],
-            ['rePassword', 'string', 'min' => 6, 'max' => 60],
-            ['rePassword', 'compare', 'compareAttribute' => 'password', 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
+//            ['rePassword', 'required'],
+//            ['rePassword', 'string', 'min' => 6, 'max' => 60],
+//            ['rePassword', 'compare', 'compareAttribute' => 'password', 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
+
+            //oldPassword
+//            ['oldPassword', 'required'],
+//            ['oldPassword', 'string', 'min' => 6, 'max' => 60],
+//            ['oldPassword', 'validatePassword', 'message' => Yii::t('accounts', 'The password input was wrong. Please try again.')],
 
             //status
-            ['status', 'required'],
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray())],
+//            ['status', 'required'],
+//            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+//            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray())],
 
             //role
-            ['role', 'required'],
-            ['role', 'default', 'value' => self::ROLE_GUEST],
-            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray())],
+//            ['role', 'required'],
+//            ['role', 'default', 'value' => self::ROLE_GUEST],
+//            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray())],
+
+            //rememberMe
+            ['rememberMe', 'boolean', 'on' => ['login']],
         ];
+    }
+
+    /**
+    * @inheritdoc
+    */
+    public function scenarios()
+    {
+        return [
+            'login' => ['username', 'password', 'rememberMe'],
+        ];
+    }
+
+    /**
+     * Validates the login form
+     */
+    public function validateLogin()
+    {
+        if ($this->hasErrors()) {
+            $this->addError('password', Yii::t('accounts', 'Incorrect username or password. Please try again.'));
+        }
+
+        if (($user = $this->findUser($this->username)) === null) {
+            $this->addError('password', Yii::t('accounts', 'Incorrect username or password. Please try again.'));
+        }
+
+        if (!$user->validatePassword($this->password)) {
+            $this->addError('password', Yii::t('accounts', 'Incorrect username or password. Please try again.'));
+        }
+    }
+
+    /**
+     * Logs in a user using the provided username|email and password.
+     *
+     * @return boolean whether the user is logged in successfully
+     */
+    public function login()
+    {
+        if (!$this->validate())
+            return false;
+
+        if (($user = $this->findUser($this->username)) === null)
+            return false;
+
+        return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
     }
 
     /**
@@ -356,14 +416,73 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+    * Find user by id, username or email
+    *
+    * @param string $attr id|username|email
+    */
+    public function findUser($attr)
+    {
+        if ($this->_user === null) {
+            switch (gettype($attr)) {
+                case 'integer':
+                    $this->_user = self::findById($attr);
+                    break;
+                case 'string':
+                    if (strpos($attr, '@')) {
+                        $this->_user = self::findByEmail($attr);
+                    } else {
+                        $this->_user = self::findByUsername($attr);
+                    }
+                    break;
+            }
+
+        }
+
+        return $this->_user;
+    }
+
+    /**
+    * Get user by id, username or email
+    * This is the alias method for User::findUser($attr)
+    *
+    * @param string $attr id|username|email
+    */
+    public function getUser($attr)
+    {
+        return $this->findUser($attr);
+    }
+
+    /**
      * Finds user by username
      *
-     * @param  string      $username
+     * @param string $username
      * @return static|null
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return self::findOne(['username' => $username]);
+    }
+
+    /**
+     * Finds user by email
+     *
+     * @param string $email
+     * @return static|null
+     */
+    public static function findByEmail($email)
+    {
+        return self::findOne(['email' => $email]);
+    }
+
+    /**
+     * Finds user by id
+     *
+     * @param string $id
+     * @return static|null
+     */
+    public static function findById($id)
+    {
+        return self::findOne($id);
     }
 
     /**
