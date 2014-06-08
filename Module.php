@@ -22,6 +22,11 @@ class Module extends \yii\base\Module
     public $passwordResetTokenExpire = 3600; //3600 = 1h
 
     /**
+    * @var bool Option to enable/disable the login
+    */
+    public $enableLogin = true;
+
+    /**
      * @var array Models of this module
      */
     private $_models = [];

@@ -8,6 +8,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\UnauthorizedHttpException;
 
 class UserController extends Controller
 {
@@ -22,8 +23,11 @@ class UserController extends Controller
                 'rules' => [
                     [
                         'actions' => ['login'],
-                        'allow' => true,
+                        'allow' => Yii::$app->getModule('accounts')->enableLogin,
                         'roles' => ['?'],
+                        'denyCallback' => function ($rule, $action) {
+                            throw new UnauthorizedHttpException(Yii::t('accounts', 'The login is currently disabled.'));
+                        }
                     ],
                     [
                         'actions' => ['logout'],
