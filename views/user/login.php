@@ -14,10 +14,17 @@ $this->title = Yii::t('accounts', 'Account Login');
                 </div>
                 <div class="panel-body">
                     <?php $form = ActiveForm::begin(['id' => 'login-form']) ?>
+
                     <?= $form->field($model, 'username')->label(Yii::t('accounts', 'Username or Email')) ?>
+
                     <?= $form->field($model, 'password')->passwordInput()->hint('<span class="glyphicon glyphicon-hand-right"></span> ' . Html::a(Yii::t('accounts', 'Forgot your password?'), ['/accounts/user/forgot-password'])) ?>
-                    <?= $form->field($model, 'rememberMe')->checkbox() ?>
+
+                    <?php if (Yii::$app->user->enableAutoLogin) : ?>
+                        <?= $form->field($model, 'rememberMe')->checkbox() ?>
+                    <?php endif; ?>
+
                     <?= Html::submitButton(Yii::t('accounts', 'Login'), ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+
                     <?php ActiveForm::end(); ?>
                 </div>
             </div>

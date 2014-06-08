@@ -45,7 +45,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
     * @var bool The remember me checkbox value
     */
-    public $rememberMe = true;
+    public $rememberMe = false;
 
     /**
     * Cache
@@ -145,7 +145,7 @@ class User extends ActiveRecord implements IdentityInterface
 //            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray())],
 
             //rememberMe
-            ['rememberMe', 'boolean', 'on' => ['login']],
+            ['rememberMe', 'boolean', 'when' => function($model) { return Yii::$app->user->enableAutoLogin; }, 'on' => ['login']],
         ];
     }
 
@@ -155,7 +155,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function scenarios()
     {
         return [
-            'login' => ['username', 'password', 'rememberMe'],
+            'login' => Yii::$app->user->enableAutoLogin ? ['username', 'password', 'rememberMe'] : ['username', 'password'],
         ];
     }
 
@@ -190,7 +190,7 @@ class User extends ActiveRecord implements IdentityInterface
         if (($user = $this->findUser($this->username)) === null)
             return false;
 
-        return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
+        return Yii::$app->user->login($user, ($this->rememberMe && Yii::$app->user->enableAutoLogin) ? 3600 * 24 * 30 : 0);
     }
 
     /**
