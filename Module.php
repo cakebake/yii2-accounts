@@ -28,6 +28,11 @@ class Module extends \yii\base\Module
     public $enableLogin = true;
 
     /**
+    * @var bool Option to enable/disable the registration
+    */
+    public $enableSignup = true;
+
+    /**
      * @var array Models of this module
      */
     private $_models = [];

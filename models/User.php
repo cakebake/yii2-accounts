@@ -106,28 +106,28 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             //username
-            ['username', 'required', 'on' => ['login']],
-//            ['username', 'unique'],
-            ['username', 'string', 'min' => 4, 'max' => 60, 'on' => ['login']],
-//            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'message' => Yii::t('accounts', 'Username must consist of letters, numbers, underscores and dashes only.')],
-            ['username', 'filter', 'filter' => 'trim', 'on' => ['login']],
+            ['username', 'required', 'on' => ['login', 'signup']],
+            ['username', 'unique', 'on' => ['signup']],
+            ['username', 'string', 'min' => 4, 'max' => 60, 'on' => ['login', 'signup']],
+            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'on' => ['signup'], 'message' => Yii::t('accounts', 'Username must consist of letters, numbers, underscores and dashes only.')],
+            ['username', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup']],
 
             //email
-//            ['email', 'required'],
-//            ['email', 'unique'],
-//            ['email', 'email'],
-//            ['email', 'string', 'min' => 4, 'max' => 60],
-//            ['email', 'filter', 'filter' => 'trim'],
+            ['email', 'required', 'on' => ['signup']],
+            ['email', 'unique', 'on' => ['signup']],
+            ['email', 'email', 'on' => ['signup']],
+            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup']],
+            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup']],
 
             //password
-            ['password', 'required', 'on' => ['login']],
-            ['password', 'string', 'min' => 6, 'max' => 60, 'on' => ['login']],
+            ['password', 'required', 'on' => ['login', 'signup']],
+            ['password', 'string', 'min' => 6, 'max' => 60, 'on' => ['login', 'signup']],
             ['password', 'validateLogin', 'on' => ['login']],
 
             //rePassword
-//            ['rePassword', 'required'],
-//            ['rePassword', 'string', 'min' => 6, 'max' => 60],
-//            ['rePassword', 'compare', 'compareAttribute' => 'password', 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
+            ['rePassword', 'required', 'on' => ['signup']],
+            ['rePassword', 'string', 'on' => ['signup']],
+            ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['signup'], 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
 
             //oldPassword
 //            ['oldPassword', 'required'],
@@ -136,12 +136,12 @@ class User extends ActiveRecord implements IdentityInterface
 
             //status
 //            ['status', 'required'],
-//            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'default', 'value' => self::STATUS_INACTIVE, 'on' => ['signup']],
 //            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray())],
 
             //role
 //            ['role', 'required'],
-//            ['role', 'default', 'value' => self::ROLE_GUEST],
+            ['role', 'default', 'value' => self::ROLE_GUEST, 'on' => ['signup']],
 //            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray())],
 
             //rememberMe
@@ -156,6 +156,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             'login' => Yii::$app->user->enableAutoLogin ? ['username', 'password', 'rememberMe'] : ['username', 'password'],
+            'signup' => ['username', 'email', 'password', 'rePassword'],
         ];
     }
 
@@ -185,10 +186,7 @@ class User extends ActiveRecord implements IdentityInterface
         if (!parent::beforeSave($insert))
             return false;
 
-        //salts the password
-        if (!empty($this->password)) {
-            $this->setPassword($this->password);
-        }
+        $this->setPassword();
 
         return true;
     }
@@ -354,17 +352,24 @@ class User extends ActiveRecord implements IdentityInterface
      *
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword($password = null)
     {
-        $this->password_hash = Security::generatePasswordHash($password);
+        if ($password === null && !empty($this->password)) {
+            $password = $this->password;
+        }
+
+        if (empty($password))
+            return false;
+
+        return $this->password_hash = Security::generatePasswordHash($password);
     }
 
     /**
      * Generates "remember me" authentication key
      */
-    public function generateAuthKey()
+    public function setAuthKey()
     {
-        $this->auth_key = Security::generateRandomKey();
+        return $this->auth_key = Security::generateRandomKey();
     }
 
     /**

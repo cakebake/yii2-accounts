@@ -4,8 +4,10 @@ namespace cakebake\accounts\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\web\Response;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\widgets\ActiveForm;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
@@ -27,6 +29,14 @@ class UserController extends Controller
                         'roles' => ['?'],
                         'denyCallback' => function ($rule, $action) {
                             throw new UnauthorizedHttpException(Yii::t('accounts', 'The login is currently disabled.'));
+                        }
+                    ],
+                    [
+                        'actions' => ['signup'],
+                        'allow' => Yii::$app->getModule('accounts')->enableSignup,
+                        'roles' => ['?'],
+                        'denyCallback' => function ($rule, $action) {
+                            throw new UnauthorizedHttpException(Yii::t('accounts', 'The signup is currently disabled.'));
                         }
                     ],
                     [
@@ -93,6 +103,35 @@ class UserController extends Controller
     }
 
     /**
+    * The register action
+    */
+    public function actionSignup()
+    {
+        $model = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'signup']);
+
+        if (Yii::$app->request->isAjax) {
+            if ($model->load(Yii::$app->request->post())) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+
+                return ActiveForm::validate($model);
+            }
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->setAuthKey() && $model->save(false)) {
+                if (Yii::$app->getUser()->login($model)) {
+
+                    return $this->goHome();
+                }
+            }
+        }
+
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
     * Redirects the browser to the login page. If the current page is not available after
     * login, please use following param.
     *
@@ -130,7 +169,7 @@ class UserController extends Controller
         $model = null;
 
         if (is_array($id)) {
-            $model = $modelPath::find()->where(['id' => $id])->all();
+            $model = $modelPath::find()->where(['id' => $id])->all(); //@todo try ->batch()
         } else {
             $model = $modelPath::findOne($id);
         }
