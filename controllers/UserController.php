@@ -115,6 +115,8 @@ class UserController extends Controller
 
                 return ActiveForm::validate($model);
             }
+
+            return false;
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {

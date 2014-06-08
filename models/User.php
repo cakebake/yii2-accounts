@@ -141,7 +141,8 @@ class User extends ActiveRecord implements IdentityInterface
 
             //role
 //            ['role', 'required'],
-            ['role', 'default', 'value' => self::ROLE_GUEST, 'on' => ['signup']],
+            ['role', 'default', 'value' => self::ROLE_USER, 'on' => ['signup']],
+//            ['role', 'default', 'value' => self::ROLE_GUEST],
 //            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray())],
 
             //rememberMe
