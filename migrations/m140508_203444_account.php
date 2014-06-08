@@ -43,8 +43,9 @@ class m140508_203444_account extends \yii\db\Migration
         $this->insert('{{%account}}', [
             'username' => 'admin',
             'email' => 'admin@example.com',
+            'auth_key' => 'rYw3eA_gpZpSPKfsPpHdlr02ajntevGG',
             'password_hash' => '$2a$13$6Z/QJ5NCPSkvGK45ZCLnaeKk7dWh7zjihiEguQdh8fE.EEPrqEcXS',
-            'role' => '20',
+            'role' => '25',
             'status' => '10',
             'created_at' => $time,
             'updated_at' => $time,
@@ -53,6 +54,7 @@ class m140508_203444_account extends \yii\db\Migration
         $this->insert('{{%account}}', [
             'username' => 'user',
             'email' => 'user@example.com',
+            'auth_key' => '9YhMqwMxzwS1_lintchTBDQvO3G2vYSk',
             'password_hash' => '$2a$13$6Z/QJ5NCPSkvGK45ZCLnaeKk7dWh7zjihiEguQdh8fE.EEPrqEcXS',
             'role' => '10',
             'status' => '10',
