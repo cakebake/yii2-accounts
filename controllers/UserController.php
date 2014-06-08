@@ -66,8 +66,7 @@ class UserController extends Controller
     */
     public function actionLogin()
     {
-        $model = Yii::$app->getModule('accounts')->getModel('user');
-        $model->setScenario('login');
+        $model = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'login']);
 
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();

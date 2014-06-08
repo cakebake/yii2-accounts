@@ -3,6 +3,7 @@
 namespace cakebake\accounts;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 class Module extends \yii\base\Module
 {
@@ -47,10 +48,10 @@ class Module extends \yii\base\Module
      *
      * @param string $id model ID
      * @param boolean $load whether to load the model if it is not yet loaded
-     * @param array $params the constructor parameters
+     * @param array $config a list of name-value pairs that will be used to initialize the object properties.
      * @return Model|null the model instance, null if the model does not exist
      */
-    public function getModel($id, $load = true, array $params = [])
+    public function getModel($id, $load = true, array $config = [])
     {
         $id = strtolower($id);
 
@@ -58,10 +59,10 @@ class Module extends \yii\base\Module
             if ($load) {
                 Yii::trace("Loading model: $id", __METHOD__);
                 if (!is_array($this->_models[$id]) && !isset($this->_models[$id]['class'])) {
-                    $this->_models[$id] = ['class' => $this->_models[$id]];
+                    $this->_models[$id] = ArrayHelper::merge(['class' => $this->_models[$id]], $config);
                 }
 
-                return Yii::createObject($this->_models[$id], $params);
+                return Yii::createObject($this->_models[$id]);
             } else {
 
                 return $this->_models[$id];
