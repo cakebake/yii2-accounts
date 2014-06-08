@@ -178,22 +178,6 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Logs in a user using the provided username|email and password.
-     *
-     * @return boolean whether the user is logged in successfully
-     */
-    public function login()
-    {
-        if (!$this->validate())
-            return false;
-
-        if (($user = $this->findUser($this->username)) === null)
-            return false;
-
-        return Yii::$app->user->login($user, ($this->rememberMe && Yii::$app->user->enableAutoLogin) ? 3600 * 24 * 30 : 0);
-    }
-
-    /**
      * @inheritdoc
      */
     public function beforeSave($insert)

@@ -68,8 +68,13 @@ class UserController extends Controller
     {
         $model = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'login']);
 
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if (($user = $model->findUser($model->username)) !== null) {
+                if (Yii::$app->user->login($user, ($model->rememberMe && Yii::$app->user->enableAutoLogin) ? 3600 * 24 * 30 : 0)) {
+
+                    return $this->goBack();
+                }
+            }
         }
 
         return $this->render('login', [
