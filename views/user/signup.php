@@ -13,7 +13,7 @@ $this->title = Yii::t('accounts', 'Account Signup');
                     <p class="panel-title"><?= Html::encode($this->title) ?></p>
                 </div>
                 <div class="panel-body">
-                    <p><?= Yii::t('accounts', 'Please fill out the following fields to create a new account.') ?></p>
+                    <p><?= Yii::t('accounts', 'Please fill out the following fields to create a new account, or {loginlink} if you already have an account.', ['loginlink' => Html::a(Yii::t('accounts', 'Login'), ['login'])]) ?></p>
                     <?php $form = ActiveForm::begin([
                         'id' => 'form-signup',
                         'enableAjaxValidation' => true,
@@ -32,6 +32,7 @@ $this->title = Yii::t('accounts', 'Account Signup');
                     <?php ActiveForm::end(); ?>
                 </div>
             </div>
+            <?= $this->render('_signupActivationResendHint') ?>
         </div>
     </div>
 </div>

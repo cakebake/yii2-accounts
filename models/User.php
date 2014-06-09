@@ -113,11 +113,12 @@ class User extends ActiveRecord implements IdentityInterface
             ['username', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup']],
 
             //email
-            ['email', 'required', 'on' => ['signup']],
+            ['email', 'required', 'on' => ['signup', 'signup-activation-resend']],
             ['email', 'unique', 'on' => ['signup']],
-            ['email', 'email', 'on' => ['signup']],
-            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup']],
-            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup']],
+            ['email', 'email', 'on' => ['signup', 'signup-activation-resend']],
+            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'signup-activation-resend']],
+            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup', 'signup-activation-resend']],
+            ['email', 'exist', 'on' => ['signup-activation-resend']],
 
             //password
             ['password', 'required', 'on' => ['login', 'signup']],
@@ -158,6 +159,7 @@ class User extends ActiveRecord implements IdentityInterface
             'login' => Yii::$app->user->enableAutoLogin ? ['username', 'password', 'rememberMe'] : ['username', 'password'],
             'signup' => ['username', 'email', 'password', 'rePassword'],
             'signup-activation' => [],
+            'signup-activation-resend' => ['email'],
         ];
     }
 

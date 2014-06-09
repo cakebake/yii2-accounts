@@ -28,6 +28,7 @@ $this->title = Yii::t('accounts', 'Account Login');
                     <?php ActiveForm::end(); ?>
                 </div>
             </div>
+            <?= $this->render('_signupActivationResendHint') ?>
         </div>
     </div>
 </div>
