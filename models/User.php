@@ -136,12 +136,11 @@ class User extends ActiveRecord implements IdentityInterface
 
             //status
 //            ['status', 'required'],
-            ['status', 'default', 'value' => self::STATUS_INACTIVE, 'on' => ['signup']],
+//            ['status', 'default', 'value' => self::STATUS_INACTIVE],
 //            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray())],
 
             //role
 //            ['role', 'required'],
-            ['role', 'default', 'value' => self::ROLE_USER, 'on' => ['signup']],
 //            ['role', 'default', 'value' => self::ROLE_GUEST],
 //            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray())],
 
@@ -158,6 +157,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             'login' => Yii::$app->user->enableAutoLogin ? ['username', 'password', 'rememberMe'] : ['username', 'password'],
             'signup' => ['username', 'email', 'password', 'rePassword'],
+            'signup-activation' => [],
         ];
     }
 
@@ -371,6 +371,31 @@ class User extends ActiveRecord implements IdentityInterface
     public function setAuthKey()
     {
         return $this->auth_key = Security::generateRandomKey();
+    }
+
+    /**
+    * Signup default user configuration
+    */
+    public function setSignupUserConfig() {
+        if (Yii::$app->getModule('accounts')->enableEmailSignupActivation) {
+            $this->status = self::STATUS_INACTIVE;
+        } else {
+            $this->status = self::STATUS_ACTIVE;
+        }
+        $this->role = self::ROLE_USER;
+
+        return true;
+    }
+
+    /**
+    * Signup activation user configuration
+    * Set user active and generate a new auth key
+    */
+    public function setSignupActivationDefaults() {
+        $this->status = self::STATUS_ACTIVE;
+        $this->setAuthKey();
+
+        return true;
     }
 
     /**

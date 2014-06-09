@@ -8,6 +8,6 @@ $link = \Yii::$app->urlManager->createAbsoluteUrl(['/accounts/user/reset-passwor
 <h1><?= Yii::t('accounts', 'Hello {nicename}, ', ['nicename' => Html::encode($user->getNicename())]) ?></h1>
 
 <p>
-    <?= Yii::t('accounts', 'Follow the link below to reset your password:') ?><br />
+    <?= Yii::t('accounts', 'follow the link below to reset your password:') ?><br />
     <?= Html::a(Html::encode($link), $link) ?>
 </p>

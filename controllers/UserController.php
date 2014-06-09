@@ -40,6 +40,14 @@ class UserController extends Controller
                         }
                     ],
                     [
+                        'actions' => ['signup-activation'],
+                        'allow' => (Yii::$app->getModule('accounts')->enableSignup && Yii::$app->getModule('accounts')->enableEmailSignupActivation) ? true : false,
+                        'roles' => ['?'],
+                        'denyCallback' => function ($rule, $action) {
+                            throw new UnauthorizedHttpException(Yii::t('accounts', 'The signup activation is currently disabled.'));
+                        }
+                    ],
+                    [
                         'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -50,6 +58,9 @@ class UserController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
+                ],
+                'actions' => [
+                    'signup-activation' => ['get'],
                 ],
             ],
         ];
@@ -120,10 +131,27 @@ class UserController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($model->setAuthKey() && $model->save(false)) {
-                if (Yii::$app->getUser()->login($model)) {
+            if ($model->setAuthKey() && $model->setSignupUserConfig() && $model->save()) {
+                if (Yii::$app->getModule('accounts')->enableEmailSignupActivation) {
 
-                    return $this->goHome();
+                    $email = Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'signupActivation', ['user' => $model])
+                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
+                        ->setTo($model->email)
+                        ->setSubject(Yii::t('accounts', 'Account activation for {appname}', ['appname' => Yii::$app->name]))
+                        ->send();
+
+                    if ($email) {
+                        Yii::$app->session->setFlash('success-signup', Yii::t('accounts', 'Registration was successful. Please check your email inbox for further action to account activation.'));
+                    } else {
+                        Yii::$app->session->setFlash('error-signup-email', Yii::t('accounts', 'Registration was successful, but the activation email could not be sent. Please contact us if you think this is a server error. Thank you.'));
+                    }
+
+                } else {
+
+                    if (Yii::$app->getUser()->login($model)) {
+                        return $this->goHome();
+                    }
+
                 }
             }
         }
@@ -131,6 +159,36 @@ class UserController extends Controller
         return $this->render('signup', [
             'model' => $model,
         ]);
+    }
+
+    /**
+    * The signup activation page
+    * This page is only used with the registration email to activate a user account
+    *
+    * @param string $email The email adress from signup form
+    * @param string $auth_key The generated auth_key from signup
+    */
+    public function actionSignupActivation($email, $auth_key)
+    {
+        $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
+
+        if (($model = $modelPath::findByEmail($email)) !== null) {
+            if ($model->status === $modelPath::STATUS_INACTIVE) {
+                if ($model->auth_key === $auth_key) {
+                    $model->setScenario('signup-activation');
+                    $model->setSignupActivationDefaults();
+                    if ($model->save()) {
+                        Yii::$app->session->setFlash('success-activation', Yii::t('accounts', 'The activation was successful. You can login now.'));
+                    }
+                }
+            } else {
+                Yii::$app->session->setFlash('info-activation', Yii::t('accounts', 'Your account is already active. You can login now.'));
+            }
+
+            $this->goLogin(['/site/index']);
+        }
+
+        throw new BadRequestHttpException(Yii::t('accounts', 'Your account could not be activated. Please contact us if you think this is a server error. Thank you.'));
     }
 
     /**

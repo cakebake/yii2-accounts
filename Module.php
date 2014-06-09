@@ -33,6 +33,11 @@ class Module extends \yii\base\Module
     public $enableSignup = true;
 
     /**
+    * @var bool Option to force email activation after signup
+    */
+    public $enableEmailSignupActivation = true;
+
+    /**
      * @var array Models of this module
      */
     private $_models = [];
