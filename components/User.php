@@ -46,4 +46,12 @@ class User extends \yii\web\User
     {
         ActionLog::add(ActionLog::LOG_STATUS_INFO, null, $identity->id);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function afterLogin($identity)
+    {
+        ActionLog::add(ActionLog::LOG_STATUS_INFO, null, $identity->id);
+    }
 }
