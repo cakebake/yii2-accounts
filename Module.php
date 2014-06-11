@@ -23,17 +23,17 @@ class Module extends \yii\base\Module
     public $passwordResetTokenExpire = 3600; //3600 = 1h
 
     /**
-    * @var bool Option to enable/disable the login
+    * @var bool Option to enable/disable the "login / forgot-password / reset-password" actions
     */
     public $enableLogin = true;
 
     /**
-    * @var bool Option to enable/disable the registration
+    * @var bool Option to enable/disable the registration and "signup-activation / signup-activation-resend" actions
     */
     public $enableSignup = true;
 
     /**
-    * @var bool Option to force email activation after signup
+    * @var bool Option to force email activation after signup; "$enableSignup" must be true
     */
     public $enableEmailSignupActivation = true;
 

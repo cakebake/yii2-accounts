@@ -24,7 +24,7 @@ class UserController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login'],
+                        'actions' => ['login', 'forgot-password', 'reset-password'],
                         'allow' => Yii::$app->getModule('accounts')->enableLogin,
                         'roles' => ['?'],
                         'denyCallback' => function ($rule, $action) {
@@ -228,7 +228,70 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+    * The password forgotten action
+    */
+    public function actionForgotPassword()
+    {
+        $model = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'forgot-password']);
 
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if (($user = $model::findActiveByEmail($model->email)) !== null) {
+
+                $user->generatePasswordResetToken();
+                $user->setScenario('generate-password-reset-token');
+
+                if ($user->save()) {
+
+                    $email = Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'forgotPassword', ['user' => $user])
+                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
+                        ->setTo($user->email)
+                        ->setSubject(Yii::t('accounts', 'Password reset for {appname}', ['appname' => Yii::$app->name]))
+                        ->send();
+
+                    if ($email) {
+                        Yii::$app->getSession()->setFlash('success-forgot-password', Yii::t('accounts', 'Please check your email for further instructions.'));
+                    } else {
+                        Yii::$app->session->setFlash('error-forgot-password', Yii::t('accounts', 'Sorry, we are unable to reset password for email provided. Please contact us if you think this is a server error. Thank you.'));
+                    }
+                    $this->goLogin(['/site/index']);
+                }
+            }
+            throw new BadRequestHttpException(Yii::t('accounts', 'Sorry, we are unable to reset password for your account. Please contact us if you think this is a server error. Thank you.'));
+        }
+
+        return $this->render('forgotPassword', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+    * The password reset action
+    *
+    * @param string $token
+    * @return {\yii\web\Response|Response|static|string}
+    */
+    public function actionResetPassword($token)
+    {
+        $model = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'reset-password']);
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if (($user = $model::findByPasswordResetToken($token)) !== null) {
+                DebugBreak();
+                if ($user->setResetPasswordDefaults($model->password)) {
+                    Yii::$app->getSession()->setFlash('success-reset-password', Yii::t('accounts', 'The new password has been saved successfully. You can use it to login now.'));
+
+                    $this->goLogin(['/site/index']);
+                }
+
+            }
+            throw new BadRequestHttpException(Yii::t('accounts', 'Sorry, we are unable to reset password for your account. Please contact us if you think this is a server error. Thank you.'));
+        }
+
+        return $this->render('resetPassword', [
+            'model' => $model,
+        ]);
+    }
 
     /**
     * Redirects the browser to the login page. If the current page is not available after

@@ -4,7 +4,7 @@ use yii\widgets\ActiveForm;
 
 $this->title = Yii::t('accounts', 'Account Signup');
 ?>
-<div class="accounts-user-signup">
+<div class="accounts-signup">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <?= cakebake\accounts\widgets\Alert::widget(); ?>

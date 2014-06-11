@@ -113,22 +113,22 @@ class User extends ActiveRecord implements IdentityInterface
             ['username', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup']],
 
             //email
-            ['email', 'required', 'on' => ['signup', 'signup-activation-resend']],
+            ['email', 'required', 'on' => ['signup', 'signup-activation-resend', 'forgot-password']],
             ['email', 'unique', 'on' => ['signup']],
-            ['email', 'email', 'on' => ['signup', 'signup-activation-resend']],
-            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'signup-activation-resend']],
-            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup', 'signup-activation-resend']],
-            ['email', 'exist', 'on' => ['signup-activation-resend']],
+            ['email', 'email', 'on' => ['signup', 'signup-activation-resend', 'forgot-password']],
+            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'signup-activation-resend', 'forgot-password']],
+            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup', 'signup-activation-resend', 'forgot-password']],
+            ['email', 'exist', 'on' => ['signup-activation-resend', 'forgot-password']],
 
             //password
-            ['password', 'required', 'on' => ['login', 'signup']],
-            ['password', 'string', 'min' => 6, 'max' => 60, 'on' => ['login', 'signup']],
+            ['password', 'required', 'on' => ['login', 'signup', 'reset-password']],
+            ['password', 'string', 'min' => 6, 'max' => 60, 'on' => ['login', 'signup', 'reset-password']],
             ['password', 'validateLogin', 'on' => ['login']],
 
             //rePassword
-            ['rePassword', 'required', 'on' => ['signup']],
-            ['rePassword', 'string', 'on' => ['signup']],
-            ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['signup'], 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
+            ['rePassword', 'required', 'on' => ['signup', 'reset-password']],
+            ['rePassword', 'string', 'on' => ['signup', 'reset-password']],
+            ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['signup', 'reset-password'], 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
 
             //oldPassword
 //            ['oldPassword', 'required'],
@@ -160,6 +160,9 @@ class User extends ActiveRecord implements IdentityInterface
             'signup' => ['username', 'email', 'password', 'rePassword'],
             'signup-activation' => [],
             'signup-activation-resend' => ['email'],
+            'forgot-password' => ['email'],
+            'reset-password' => ['password', 'rePassword'],
+            'generate-password-reset-token' => []
         ];
     }
 
@@ -401,6 +404,19 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+    * New attributes for password reset
+    * @param string $password The new account password
+    */
+    public function setResetPasswordDefaults($password) {
+        //$this->setScenario('reset-password');
+        $this->removePasswordResetToken();
+        $this->password = $password;
+        //$this->password_reset_token = $password;
+
+        return $this->save(false);
+    }
+
+    /**
      * Generates new password reset token
      */
     public function generatePasswordResetToken()
@@ -481,6 +497,17 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Finds active user by username
+     *
+     * @param string $username
+     * @return static|null
+     */
+    public static function findActiveByUsername($username)
+    {
+        return self::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+    }
+
+    /**
      * Finds user by email
      *
      * @param string $email
@@ -489,6 +516,17 @@ class User extends ActiveRecord implements IdentityInterface
     public static function findByEmail($email)
     {
         return self::findOne(['email' => $email]);
+    }
+
+    /**
+     * Finds active user by email
+     *
+     * @param string $email
+     * @return static|null
+     */
+    public static function findActiveByEmail($email)
+    {
+        return self::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -503,9 +541,20 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Finds active user by id
+     *
+     * @param string $id
+     * @return static|null
+     */
+    public static function findActiveById($id)
+    {
+        return self::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+    }
+
+    /**
      * Finds user by password reset token
      *
-     * @param  string      $token password reset token
+     * @param string $token password reset token
      * @return static|null
      */
     public static function findByPasswordResetToken($token)
