@@ -9,7 +9,6 @@ use yii\db\Expression;
 use yii\data\ActiveDataProvider;
 use yii\base\NotSupportedException;
 use yii\base\Formatter;
-use yii\helpers\Security;
 
 /**
  * This is the default model class for table "account" and user identity
@@ -367,7 +366,7 @@ class User extends ActiveRecord implements IdentityInterface
         if (empty($password))
             return false;
 
-        return $this->password_hash = Security::generatePasswordHash($password);
+        return $this->password_hash = Yii::$app->security->generatePasswordHash($password);
     }
 
     /**
@@ -375,7 +374,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setAuthKey()
     {
-        return $this->auth_key = Security::generateRandomKey();
+        return $this->auth_key = Yii::$app->security->generateRandomKey();
     }
 
     /**
@@ -421,7 +420,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function generatePasswordResetToken()
     {
-        $this->password_reset_token = Security::generateRandomKey() . '_' . time();
+        $this->password_reset_token = Yii::$app->security->generateRandomKey() . '_' . time();
     }
 
     /**
@@ -610,7 +609,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validatePassword($password)
     {
-        return Security::validatePassword($password, $this->password_hash);
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
 
     /**
