@@ -2,6 +2,7 @@
 
 use yii\db\Schema;
 use yii\db\Expression;
+use yii\db\Migration;
 
 /**
 * DATABSE SCHEMA OF THIS MODULE
@@ -9,7 +10,7 @@ use yii\db\Expression;
 * @version 1.0.0
 * @see http://www.yiiframework.com/doc-2.0/guide-console-migrate.html
 */
-class m140508_203444_account extends \yii\db\Migration
+class m140508_203444_account extends Migration
 {
     public function safeUp()
     {
