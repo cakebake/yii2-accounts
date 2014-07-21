@@ -48,7 +48,7 @@ class UserController extends Controller
                         }
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout', 'profile'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -80,6 +80,25 @@ class UserController extends Controller
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
+    }
+
+    /**
+     * Displays a single profile
+     *
+     * @param string $u The user name
+     * @return mixed
+     */
+    public function actionProfile($u)
+    {
+        $model = Yii::$app->getModule('accounts')->getModel('user', false);
+
+        if (($user = $model::findActiveByUsername($u)) === null) {
+            throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
+        }
+
+        return $this->render('profile', [
+            'model' => $user,
+        ]);
     }
 
     /**

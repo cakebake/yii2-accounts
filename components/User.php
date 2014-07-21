@@ -40,6 +40,17 @@ class User extends \yii\web\User
     }
 
     /**
+    * Get users Username
+    */
+    public function getUsername()
+    {
+        if (($user = $this->getIdentity()) === false)
+            return null;
+
+        return $user->username;
+    }
+
+    /**
      * @inheritdoc
      */
     protected function afterLogout($identity)
