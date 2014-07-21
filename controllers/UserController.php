@@ -277,7 +277,7 @@ class UserController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if (($user = $model::findByPasswordResetToken($token)) !== null) {
-                DebugBreak();
+
                 if ($user->setResetPasswordDefaults($model->password)) {
                     Yii::$app->getSession()->setFlash('success-reset-password', Yii::t('accounts', 'The new password has been saved successfully. You can use it to login now.'));
 
