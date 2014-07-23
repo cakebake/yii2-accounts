@@ -162,7 +162,8 @@ class User extends ActiveRecord implements IdentityInterface
             'signup-activation-resend' => ['email'],
             'forgot-password' => ['email'],
             'reset-password' => ['password', 'rePassword'],
-            'generate-password-reset-token' => []
+            'generate-password-reset-token' => [],
+            'delete' => [],
         ];
     }
 

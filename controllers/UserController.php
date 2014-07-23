@@ -48,7 +48,7 @@ class UserController extends Controller
                         }
                     ],
                     [
-                        'actions' => ['logout', 'profile', 'edit'],
+                        'actions' => ['logout', 'profile', 'edit', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -58,10 +58,12 @@ class UserController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
-                ],
-                'actions' => [
+                    'delete' => ['post'],
                     'signup-activation' => ['get'],
                 ],
+//                'actions' => [
+//                    'signup-activation' => ['get'],
+//                ],
             ],
         ];
     }
@@ -215,6 +217,27 @@ class UserController extends Controller
         return $this->render('edit', [
             'model' => $model,
         ]);
+    }
+
+    /**
+     * Deletes an existing account model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param string $u The user name
+     * @return mixed
+     */
+    public function actionDelete($u)
+    {
+        $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
+
+        if (($model = $modelPath::findByUsername($u)) === null) {
+            throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
+        }
+
+        $model->setScenario('delete');
+
+        $model->delete();
+
+        return $this->redirect(['index']);
     }
 
     /**
