@@ -48,7 +48,7 @@ class UserController extends Controller
                         }
                     ],
                     [
-                        'actions' => ['logout', 'profile'],
+                        'actions' => ['logout', 'profile', 'edit'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -178,6 +178,41 @@ class UserController extends Controller
         }
 
         return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Edits a single profile
+     *
+     * @param string $u The user name
+     * @return mixed
+     */
+    public function actionEdit($u)
+    {
+        $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
+
+        if (($model = $modelPath::findActiveByUsername($u)) === null) {
+            throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
+        }
+
+        $model->setScenario('edit');
+
+        if (Yii::$app->request->isAjax) {
+            if ($model->load(Yii::$app->request->post())) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+
+                return ActiveForm::validate($model);
+            }
+
+            return false;
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['profile', 'u' => $model->username]);
+        }
+
+        return $this->render('edit', [
             'model' => $model,
         ]);
     }
