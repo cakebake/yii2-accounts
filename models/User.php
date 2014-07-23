@@ -174,14 +174,17 @@ class User extends ActiveRecord implements IdentityInterface
     {
         if ($this->hasErrors()) {
             $this->addError('password', Yii::t('accounts', 'Incorrect username or password. Please try again.'));
+            return false;
         }
 
         if (($user = $this->findUser($this->username)) === null) {
             $this->addError('password', Yii::t('accounts', 'Incorrect username or password. Please try again.'));
+            return false;
         }
 
         if (!$user->validatePassword($this->password)) {
             $this->addError('password', Yii::t('accounts', 'Incorrect username or password. Please try again.'));
+            return false;
         }
     }
 
