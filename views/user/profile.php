@@ -3,7 +3,9 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-$this->title = $model->getNicename() . '´s ' . Yii::t('accounts', 'Profile');
+$this->title =  Yii::t('accounts', '{nicename}´s Profile', [
+    'nicename' => $model->getNicename(),
+]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Accounts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
