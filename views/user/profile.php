@@ -12,11 +12,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+        <?= Html::a(Yii::t('accounts', 'Edit Account'), ['edit', 'u' => $model->username], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('accounts', 'Delete Account'), ['delete', 'u' => $model->username], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
+                'confirm' => Yii::t('accounts', 'Are you sure you want to delete this account?'),
                 'method' => 'post',
             ],
         ]) ?>
