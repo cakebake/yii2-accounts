@@ -39,7 +39,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
     * @var string To check the user identity, before changing secure data
     */
-    public $oldPassword;
+    public $curPassword;
 
     /**
     * @var bool The remember me checkbox value
@@ -121,18 +121,18 @@ class User extends ActiveRecord implements IdentityInterface
 
             //password
             ['password', 'required', 'on' => ['login', 'signup', 'reset-password']],
-            ['password', 'string', 'min' => 6, 'max' => 60, 'on' => ['login', 'signup', 'reset-password']],
+            ['password', 'string', 'min' => 6, 'max' => 60, 'on' => ['login', 'signup', 'edit', 'reset-password']],
             ['password', 'validateLogin', 'on' => ['login']],
 
             //rePassword
             ['rePassword', 'required', 'on' => ['signup', 'reset-password']],
-            ['rePassword', 'string', 'on' => ['signup', 'reset-password']],
+            ['rePassword', 'string', 'on' => ['signup', 'edit', 'reset-password']],
             ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['signup', 'reset-password'], 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
+            ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['edit'], 'message' => Yii::t('accounts', 'New Password must be repeated exactly.')],
 
-            //oldPassword
-//            ['oldPassword', 'required'],
-//            ['oldPassword', 'string', 'min' => 6, 'max' => 60],
-//            ['oldPassword', 'validatePassword', 'message' => Yii::t('accounts', 'The password input was wrong. Please try again.')],
+            //curPassword
+            ['curPassword', 'string', 'min' => 6, 'max' => 60, 'on' => ['edit']],
+            ['curPassword', 'validateCurPassword', 'on' => ['edit']],
 
             //status
 //            ['status', 'required'],
@@ -157,7 +157,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             'login' => Yii::$app->user->enableAutoLogin ? ['username', 'password', 'rememberMe'] : ['username', 'password'],
             'signup' => ['username', 'email', 'password', 'rePassword'],
-            'edit' => ['username', 'email', 'password', 'rePassword'],
+            'edit' => ['username', 'email', 'password', 'rePassword', 'curPassword'],
             'signup-activation' => [],
             'signup-activation-resend' => ['email'],
             'forgot-password' => ['email'],
@@ -618,6 +618,16 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+    * Validates current password attribute
+    */
+    public function validateCurPassword()
+    {
+        if (!$this->validatePassword($this->curPassword)) {
+            $this->addError('curPassword', Yii::t('accounts', 'The password does not match the stored. Please try again.'));
+        }
+    }
+
+    /**
      * Removes password reset token
      */
     public function removePasswordResetToken()
@@ -637,6 +647,7 @@ class User extends ActiveRecord implements IdentityInterface
             'auth_key' => Yii::t('accounts', 'Auth Key'),
             'password' => Yii::t('accounts', 'Password'),
             'rePassword' => Yii::t('accounts', 'Repeat Password'),
+            'curPassword' => Yii::t('accounts', 'Current Password'),
             'password_hash' => Yii::t('accounts', 'Password Hash'),
             'password_reset_token' => Yii::t('accounts', 'Password Reset Token'),
             'role' => Yii::t('accounts', 'Role'),
