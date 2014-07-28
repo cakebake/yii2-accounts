@@ -38,6 +38,11 @@ class Module extends \yii\base\Module
     public $enableEmailSignupActivation = true;
 
     /**
+    * @var bool Option to force email activation after identity edit (username and email)
+    */
+    public $enableEmailEditActivation = true;
+
+    /**
      * @var array Models of this module
      */
     private $_models = [];

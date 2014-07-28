@@ -210,8 +210,40 @@ class UserController extends Controller
             return false;
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['profile', 'u' => $model->username]);
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
+            $identityChange = false;
+            if ($model->username != $model->oldAttributes['username']) {
+                $identityChange = true;
+            }
+            if ($model->email != $model->oldAttributes['email']) {
+                $identityChange = true;
+            }
+
+            if ($identityChange && Yii::$app->getModule('accounts')->enableEmailEditActivation) {
+                if ($model->setAuthKey() && $model->setEditUserConfig() && $model->save(false)) {
+
+                    $email = Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'editActivation', ['user' => $model])
+                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
+                        ->setTo($model->email)
+                        ->setSubject(Yii::t('accounts', 'Account activation for {appname}', ['appname' => Yii::$app->name]))
+                        ->send();
+
+                    if ($email) {
+                        Yii::$app->session->setFlash('success-edit', Yii::t('accounts', 'Update was successful. Please check your email inbox for further action to account activation.'));
+                    } else {
+                        Yii::$app->session->setFlash('error-edit-email', Yii::t('accounts', 'Update was successful, but the activation email could not be sent. Please contact us if you think this is a server error. Thank you.'));
+                    }
+
+                    Yii::$app->user->logout();
+
+                    return $this->goLogin(['/site/index']);
+                }
+            } else {
+                if ($model->save(false)) {
+                    return $this->redirect(['profile', 'u' => $model->username]);
+                }
+            }
         }
 
         return $this->render('edit', [

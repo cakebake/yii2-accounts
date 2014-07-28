@@ -396,6 +396,17 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+    * Edit identity user configuration
+    */
+    public function setEditUserConfig() {
+        if (Yii::$app->getModule('accounts')->enableEmailEditActivation) {
+            $this->status = self::STATUS_INACTIVE;
+        }
+
+        return true;
+    }
+
+    /**
     * Signup activation user configuration
     * Set user active and generate a new auth key
     */
