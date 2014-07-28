@@ -94,7 +94,7 @@ class UserController extends Controller
     {
         $model = Yii::$app->getModule('accounts')->getModel('user', false);
 
-        if (($user = $model::findActiveByUsername($u)) === null) {
+        if (($user = $model::findByUsername($u)) === null) {
             throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
         }
 
@@ -194,7 +194,7 @@ class UserController extends Controller
     {
         $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
 
-        if (($model = $modelPath::findActiveByUsername($u)) === null) {
+        if (($model = $modelPath::findByUsername($u)) === null) {
             throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
         }
 

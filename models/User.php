@@ -127,22 +127,21 @@ class User extends ActiveRecord implements IdentityInterface
             //rePassword
             ['rePassword', 'required', 'on' => ['signup', 'reset-password']],
             ['rePassword', 'string', 'on' => ['signup', 'edit', 'reset-password']],
-            ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['signup', 'reset-password'], 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
-            ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['edit'], 'message' => Yii::t('accounts', 'New Password must be repeated exactly.')],
+            ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['signup', 'edit', 'reset-password'], 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
 
             //curPassword
             ['curPassword', 'string', 'min' => 6, 'max' => 60, 'on' => ['edit']],
             ['curPassword', 'validateCurPassword', 'on' => ['edit']],
 
             //status
-//            ['status', 'required'],
-//            ['status', 'default', 'value' => self::STATUS_INACTIVE],
-//            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray())],
+            ['status', 'required', 'on' => ['edit']],
+            //['status', 'default', 'value' => self::STATUS_INACTIVE, 'on' => ['edit']],
+            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray()), 'on' => ['edit']],
 
             //role
-//            ['role', 'required'],
-//            ['role', 'default', 'value' => self::ROLE_GUEST],
-//            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray())],
+            ['role', 'required', 'on' => ['edit']],
+            //['role', 'default', 'value' => self::ROLE_GUEST, 'on' => ['edit']],
+            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray()), 'on' => ['edit']],
 
             //rememberMe
             ['rememberMe', 'boolean', 'when' => function($model) { return Yii::$app->user->enableAutoLogin; }, 'on' => ['login']],
@@ -157,7 +156,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             'login' => Yii::$app->user->enableAutoLogin ? ['username', 'password', 'rememberMe'] : ['username', 'password'],
             'signup' => ['username', 'email', 'password', 'rePassword'],
-            'edit' => ['username', 'email', 'password', 'rePassword', 'curPassword'],
+            'edit' => ['username', 'email', 'password', 'rePassword', 'curPassword', 'status', 'role'],
             'signup-activation' => [],
             'signup-activation-resend' => ['email'],
             'forgot-password' => ['email'],
@@ -562,6 +561,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @return static|null
      */
     public static function findByPasswordResetToken($token)
+
     {
         $user = static::findOne([
             'password_reset_token' => $token,
@@ -623,7 +623,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function validateCurPassword()
     {
         if (!$this->validatePassword($this->curPassword)) {
-            $this->addError('curPassword', Yii::t('accounts', 'The password does not match the stored. Please try again.'));
+            $this->addError('curPassword', Yii::t('accounts', 'The password does not match. Please try again.'));
         }
     }
 

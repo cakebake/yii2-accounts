@@ -16,15 +16,39 @@ use yii\widgets\ActiveForm;
         ],
     ]); ?>
 
-    <?= $form->field($model, 'username')->textInput(['maxlength' => 60]) ?>
+    <div class="panel panel-settings panel-default">
+        <div class="panel-heading">
+            <?= Yii::t('accounts', 'Settings') ?>
+        </div>
+        <div class="panel-body">
+            <?= $form->field($model, 'status')->dropDownList($model->getDefinedStatusArray(), ['prompt' => Yii::t('accounts', 'Please select')]) ?>
+            <?= $form->field($model, 'role')->dropDownList($model->getDefinedRolesArray(), ['prompt' => Yii::t('accounts', 'Please select')]) ?>
+        </div>
+    </div>
 
-    <?= $form->field($model, 'email')->textInput(['maxlength' => 60]) ?>
+    <div class="panel panel-identity <?= $model->isNewRecord ? 'panel-primary' : 'panel-danger' ?>">
+        <div class="panel-heading">
+            <?= Yii::t('accounts', 'Identity') ?>
+        </div>
+        <div class="panel-body">
+            <?= $form->field($model, 'username')->textInput(['maxlength' => 60]) ?>
+            <?= $form->field($model, 'email')->textInput(['maxlength' => 60]) ?>
+        </div>
+    </div>
 
-    <?= $form->field($model, 'password')->textInput(['maxlength' => 60])->label(!$model->isNewRecord ? Yii::t('accounts', 'New Password') : null)->passwordInput() ?>
-
-    <?= $form->field($model, 'rePassword')->textInput(['maxlength' => 60])->passwordInput() ?>
-
-    <?= !$model->isNewRecord ? $form->field($model, 'curPassword')->textInput(['maxlength' => 60])->hint(Yii::t('accounts', 'To change your password, you must enter your current password. Otherwise you can leave this field blank.'))->passwordInput() : null ?>
+    <div class="panel panel-password <?= $model->isNewRecord ? 'panel-primary' : 'panel-danger' ?>">
+        <div class="panel-heading">
+            <?= Yii::t('accounts', 'Password') ?>
+        </div>
+        <div class="panel-body">
+            <?php if (!$model->isNewRecord) : ?>
+                <p><?= Yii::t('accounts', 'To change the password, you must enter the current password. Otherwise you can leave this fields blank.') ?></p>
+                <?= $form->field($model, 'curPassword')->textInput(['maxlength' => 60])->passwordInput() ?>
+            <?php endif ?>
+            <?= $form->field($model, 'password')->textInput(['maxlength' => 60])->label(!$model->isNewRecord ? Yii::t('accounts', 'New Password') : null)->passwordInput() ?>
+            <?= $form->field($model, 'rePassword')->textInput(['maxlength' => 60])->passwordInput() ?>
+        </div>
+    </div>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('accounts', 'Create') : Yii::t('accounts', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
