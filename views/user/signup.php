@@ -17,6 +17,11 @@ $this->title = Yii::t('accounts', 'Account Signup');
                     <?php $form = ActiveForm::begin([
                         'id' => 'form-signup',
                         'enableAjaxValidation' => true,
+                        'options' => [
+                            'autocomplete' => 'off',
+                            'autocapitalize' => 'off',
+                            'autocorrect' => 'off',
+                        ],
                     ]); ?>
 
                     <?= $form->field($model, 'username') ?>
@@ -30,6 +35,7 @@ $this->title = Yii::t('accounts', 'Account Signup');
                     <?= Html::submitButton(Yii::t('accounts', 'Signup'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 
                     <?php ActiveForm::end(); ?>
+
                 </div>
             </div>
             <?= $this->render('_signupActivationResendHint') ?>

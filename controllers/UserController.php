@@ -11,6 +11,7 @@ use yii\widgets\ActiveForm;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
+use cakebake\actionlog\model\ActionLog;
 
 class UserController extends Controller
 {
@@ -59,7 +60,7 @@ class UserController extends Controller
                 'actions' => [
                     'logout' => ['post'],
                     'delete' => ['post'],
-                    'signup-activation' => ['get'],
+                    //'signup-activation' => ['get'],
                 ],
 //                'actions' => [
 //                    'signup-activation' => ['get'],
@@ -152,7 +153,16 @@ class UserController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($model->setAuthKey() && $model->setSignupUserConfig() && $model->save()) {
+            if ($model->setSignupUserConfig() && $model->save()) {
+
+                $logInfo = [
+                    'info' => $model->username . ' has successfully registered.',
+                    'username' => $model->username,
+                    'email' => $model->email,
+                    'role' => $model->role,
+                    'status' => $model->status,
+                ];
+
                 if (Yii::$app->getModule('accounts')->enableEmailSignupActivation) {
 
                     $email = Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'signupActivation', ['user' => $model])
@@ -161,9 +171,17 @@ class UserController extends Controller
                         ->setSubject(Yii::t('accounts', 'Account activation for {appname}', ['appname' => Yii::$app->name]))
                         ->send();
 
+                    $logInfo['email_activation'] = [
+                        'auth_key' => $model->auth_key,
+                        'send_from' => Yii::$app->params['supportEmail'],
+                        'send_to' => $model->email,
+                    ];
+
                     if ($email) {
-                        Yii::$app->session->setFlash('success-signup', Yii::t('accounts', 'Registration was successful. Please check your email inbox for further action to account activation.'));
+                        $logInfo['email_activation']['send_status'] = 'success';
+                        Yii::$app->session->setFlash('success-signup-email', Yii::t('accounts', 'Registration was successful. Please check your email inbox for further action to account activation.'));
                     } else {
+                        $logInfo['email_activation']['send_status'] = 'error';
                         Yii::$app->session->setFlash('error-signup-email', Yii::t('accounts', 'Registration was successful, but the activation email could not be sent. Please contact us if you think this is a server error. Thank you.'));
                     }
 
@@ -171,11 +189,30 @@ class UserController extends Controller
 
                 } else {
 
+                    $logInfo['email_activation'] = 'disabled';
+
                     if (Yii::$app->getUser()->login($model)) {
-                        return $this->goHome();
+                        $logInfo['auto_login'] = 'success';
+                        Yii::$app->session->setFlash('success-signup', Yii::t('accounts', 'Registration was successful.'));
+
+                        return $this->redirect(['profile', 'u' => $model->username]);
+                    } else {
+                        $logInfo['auto_login'] = 'error';
+                        Yii::$app->session->setFlash('error-signup', Yii::t('accounts', 'Registration failed. Please contact us if you think this is a server error. Thank you.'));
+
+                        return $this->goLogin(['/site/index']);
                     }
 
                 }
+
+                ActionLog::add(ActionLog::LOG_STATUS_INFO, $logInfo, $model->id);
+
+            } else {
+                ActionLog::add(ActionLog::LOG_STATUS_ERROR, [
+                    'username' => $this->username,
+                    'email' => $this->email,
+                    'errors' => $user->errors,
+                ]);
             }
         }
 
@@ -223,6 +260,8 @@ class UserController extends Controller
 
             if ($identityChange && Yii::$app->getModule('accounts')->enableEmailEditActivation) {
                 if ($model->setAuthKey() && $model->setEditUserConfig() && $model->save(false)) {
+
+                    ActionLog::add(ActionLog::LOG_STATUS_INFO, null, $identity->id);
 
                     $email = Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'editActivation', ['user' => $model])
                         ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])

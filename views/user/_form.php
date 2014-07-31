@@ -13,6 +13,7 @@ use yii\widgets\ActiveForm;
         'options' => [
             'autocomplete' => 'off',
             'autocapitalize' => 'off',
+            'autocorrect' => 'off',
         ],
     ]); ?>
 

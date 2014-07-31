@@ -387,6 +387,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function setSignupUserConfig()
     {
         if (Yii::$app->getModule('accounts')->enableEmailSignupActivation) {
+            $this->setAuthKey();
             $this->status = self::STATUS_INACTIVE;
         } else {
             $this->status = self::STATUS_ACTIVE;
