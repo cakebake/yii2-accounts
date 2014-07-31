@@ -384,7 +384,8 @@ class User extends ActiveRecord implements IdentityInterface
     /**
     * Signup default user configuration
     */
-    public function setSignupUserConfig() {
+    public function setSignupUserConfig()
+    {
         if (Yii::$app->getModule('accounts')->enableEmailSignupActivation) {
             $this->status = self::STATUS_INACTIVE;
         } else {
@@ -398,7 +399,8 @@ class User extends ActiveRecord implements IdentityInterface
     /**
     * Edit identity user configuration
     */
-    public function setEditUserConfig() {
+    public function setEditUserConfig()
+    {
         if (Yii::$app->getModule('accounts')->enableEmailEditActivation) {
             $this->status = self::STATUS_INACTIVE;
         }
@@ -407,10 +409,33 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+    * Restore old identity, when update fails or email fails
+    * @param array $oldAttributes
+    */
+    public function restoreEditUserConfig($oldAttributes)
+    {
+        if ($this->username != $oldAttributes['username']) {
+            $this->username = $oldAttributes['username'];
+        }
+        if ($this->email != $oldAttributes['email']) {
+            $this->email = $oldAttributes['email'];
+        }
+
+        if (Yii::$app->getModule('accounts')->enableEmailEditActivation) {
+            if ($this->status == self::STATUS_INACTIVE) {
+                $this->status = $oldAttributes['status'];
+            }
+        }
+
+        return $this->save(false);
+    }
+
+    /**
     * Signup activation user configuration
     * Set user active and generate a new auth key
     */
-    public function setSignupActivationDefaults() {
+    public function setSignupActivationDefaults()
+    {
         $this->status = self::STATUS_ACTIVE;
         $this->setAuthKey();
 
@@ -421,7 +446,8 @@ class User extends ActiveRecord implements IdentityInterface
     * New attributes for password reset
     * @param string $password The new account password
     */
-    public function setResetPasswordDefaults($password) {
+    public function setResetPasswordDefaults($password)
+    {
         //$this->setScenario('reset-password');
         $this->removePasswordResetToken();
         $this->password = $password;

@@ -47,6 +47,10 @@ class Alert extends \yii\bootstrap\Widget
         $flashes = $session->getAllFlashes();
         $appendCss = isset($this->options['class']) ? ' ' . $this->options['class'] : '';
 
+        if (empty($flashes)) {
+            return false;
+        }
+
         foreach ($flashes as $type => $message) {
             //type check for more messages with the same type like "success-1"
             foreach ($this->alertTypes as $k => $t) {

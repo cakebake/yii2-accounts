@@ -9,6 +9,8 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="accounts-profile">
 
+    <?= cakebake\accounts\widgets\Alert::widget(); ?>
+
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>

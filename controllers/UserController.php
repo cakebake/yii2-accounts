@@ -213,10 +213,11 @@ class UserController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 
             $identityChange = false;
-            if ($model->username != $model->oldAttributes['username']) {
+            $oldAttributes = $model->oldAttributes;
+            if ($model->username != $oldAttributes['username']) {
                 $identityChange = true;
             }
-            if ($model->email != $model->oldAttributes['email']) {
+            if ($model->email != $oldAttributes['email']) {
                 $identityChange = true;
             }
 
@@ -230,14 +231,18 @@ class UserController extends Controller
                         ->send();
 
                     if ($email) {
+                        Yii::$app->user->logout();
                         Yii::$app->session->setFlash('success-edit', Yii::t('accounts', 'Update was successful. Please check your email inbox for further action to account activation.'));
+
+                        return $this->goLogin(['/site/index']);
                     } else {
-                        Yii::$app->session->setFlash('error-edit-email', Yii::t('accounts', 'Update was successful, but the activation email could not be sent. Please contact us if you think this is a server error. Thank you.'));
+                        Yii::$app->session->setFlash('error-edit-email', Yii::t('accounts', 'Because the activation email could not be sent, we restored the current settings. Please contact us if you think this is a server error. Thank you.'));
+                        $model->restoreEditUserConfig($oldAttributes);
+
+                        return $this->redirect(['profile', 'u' => $model->username]);
                     }
 
-                    Yii::$app->user->logout();
 
-                    return $this->goLogin(['/site/index']);
                 }
             } else {
                 if ($model->save(false)) {
