@@ -81,7 +81,7 @@ class User extends ActiveRecord implements IdentityInterface
             $data[self::STATUS_PENDING_SIGNUP] = Yii::t('accounts', 'Pending signup activation');
         }
         if (Yii::$app->getModule('accounts')->enableEmailEditActivation) {
-            $data[self::STATUS_PENDING_EDIT] = Yii::t('accounts', 'Pending account-edit activation');
+            $data[self::STATUS_PENDING_EDIT] = Yii::t('accounts', 'Pending edit-account activation');
         }
 
         return $data;
@@ -123,12 +123,12 @@ class User extends ActiveRecord implements IdentityInterface
             ['username', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup', 'edit']],
 
             //email
-            ['email', 'required', 'on' => ['signup', 'edit', 'signup-activation-resend', 'forgot-password']],
+            ['email', 'required', 'on' => ['signup', 'edit', 'account-activation-resend', 'forgot-password']],
             ['email', 'unique', 'on' => ['signup', 'edit']],
-            ['email', 'email', 'on' => ['signup', 'edit', 'signup-activation-resend', 'forgot-password']],
-            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'edit', 'signup-activation-resend', 'forgot-password']],
-            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup', 'edit', 'signup-activation-resend', 'forgot-password']],
-            ['email', 'exist', 'on' => ['signup-activation-resend', 'forgot-password']],
+            ['email', 'email', 'on' => ['signup', 'edit', 'account-activation-resend', 'forgot-password']],
+            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'edit', 'account-activation-resend', 'forgot-password']],
+            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup', 'edit', 'account-activation-resend', 'forgot-password']],
+            ['email', 'exist', 'on' => ['account-activation-resend', 'forgot-password']],
 
             //password
             ['password', 'required', 'on' => ['login', 'signup', 'reset-password']],
@@ -169,7 +169,7 @@ class User extends ActiveRecord implements IdentityInterface
             'signup' => ['username', 'email', 'password', 'rePassword'],
             'edit' => ['username', 'email', 'password', 'rePassword', 'curPassword', 'status', 'role'],
             'account-activation' => [],
-            'signup-activation-resend' => ['email'],
+            'account-activation-resend' => ['email'],
             'forgot-password' => ['email'],
             'reset-password' => ['password', 'rePassword'],
             'generate-password-reset-token' => [],
@@ -403,6 +403,7 @@ class User extends ActiveRecord implements IdentityInterface
         } else {
             $this->status = self::STATUS_ACTIVE;
         }
+
         $this->role = self::ROLE_USER;
 
         return true;
@@ -414,6 +415,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function setEditUserConfig()
     {
         if (Yii::$app->getModule('accounts')->enableEmailEditActivation) {
+            $this->setAuthKey();
             $this->status = self::STATUS_PENDING_EDIT;
         }
 

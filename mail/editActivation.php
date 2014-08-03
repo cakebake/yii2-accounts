@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 
-$link = \Yii::$app->urlManager->createAbsoluteUrl(['/accounts/user/edit-activation', 'email' => $user->email, 'auth_key' => $user->auth_key]);
+$link = \Yii::$app->urlManager->createAbsoluteUrl(['/accounts/user/account-activation', 'email' => $user->email, 'auth_key' => $user->auth_key]);
 ?>
 
 <h1><?= Yii::t('accounts', 'Hello {nicename}, ', ['nicename' => Html::encode($user->getNicename())]) ?></h1>
