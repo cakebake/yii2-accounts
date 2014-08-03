@@ -41,11 +41,11 @@ class UserController extends Controller
                         }
                     ],
                     [
-                        'actions' => ['signup-activation', 'signup-activation-resend'],
-                        'allow' => (Yii::$app->getModule('accounts')->enableSignup && Yii::$app->getModule('accounts')->enableEmailSignupActivation) ? true : false,
+                        'actions' => ['account-activation', 'account-activation-resend'],
+                        'allow' => (Yii::$app->getModule('accounts')->enableEmailSignupActivation || Yii::$app->getModule('accounts')->enableEmailEditActivation) ? true : false,
                         'roles' => ['?'],
                         'denyCallback' => function ($rule, $action) {
-                            throw new UnauthorizedHttpException(Yii::t('accounts', 'The signup activation is currently disabled.'));
+                            throw new UnauthorizedHttpException(Yii::t('accounts', 'The account activation is currently disabled.'));
                         }
                     ],
                     [
@@ -222,6 +222,86 @@ class UserController extends Controller
     }
 
     /**
+    * The account activation page
+    * This page is only used in emails to activate/reactivate a user account
+    *
+    * @param string $email The email adress
+    * @param string $auth_key The generated auth_key
+    */
+    public function actionAccountActivation($email, $auth_key)
+    {
+        $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
+
+        if (($model = $modelPath::findByEmail($email)) !== null && $model->auth_key === $auth_key) {
+
+            switch ($model->status) {
+                case $modelPath::STATUS_PENDING_SIGNUP:
+                    if (!Yii::$app->getModule('accounts')->enableEmailSignupActivation) {
+                        throw new UnauthorizedHttpException(Yii::t('accounts', 'The account activation is currently disabled.'));
+                    }
+                    $model->setScenario('account-activation');
+                    $model->setSignupActivationDefaults();
+
+                    break;
+                case $modelPath::STATUS_PENDING_EDIT:
+                    if (!Yii::$app->getModule('accounts')->enableEmailEditActivation) {
+                        throw new UnauthorizedHttpException(Yii::t('accounts', 'The account activation is currently disabled.'));
+                    }
+                    $model->setScenario('account-activation');
+                    $model->setEditActivationDefaults();
+
+                    break;
+                default:
+                    throw new BadRequestHttpException(Yii::t('accounts', 'Your account could not be activated. Please contact us if you think this is a server error. Thank you.'));
+            }
+
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success-activation', Yii::t('accounts', 'The activation was successful. You can login now.'));
+            }
+
+            $this->goLogin(['/site/index']);
+        }
+
+        throw new BadRequestHttpException(Yii::t('accounts', 'Your account could not be activated. Please contact us if you think this is a server error. Thank you.'));
+    }
+
+    /**
+    * Resends the activation email
+    */
+    public function actionSignupActivationResend()
+    {
+        $model = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'signup-activation-resend']);
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if (($user = $model::findByEmail($model->email)) !== null) {
+                if ($user->status === $model::STATUS_INACTIVE) {
+
+                    $email = Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'signupActivation', ['user' => $user])
+                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
+                        ->setTo($user->email)
+                        ->setSubject(Yii::t('accounts', 'Account activation for {appname}', ['appname' => Yii::$app->name]))
+                        ->send();
+
+                    if ($email) {
+                        Yii::$app->session->setFlash('success-signup-activation-resend', Yii::t('accounts', 'Please check your email inbox for further action to account activation.'));
+                    } else {
+                        Yii::$app->session->setFlash('error-signup-activation-resend-email', Yii::t('accounts', 'The activation email could not be sent. Please contact us if you think this is a server error. Thank you.'));
+                    }
+
+                } else {
+                    Yii::$app->session->setFlash('info-activation', Yii::t('accounts', 'Your account is already active.'));
+                }
+                $this->goLogin(['/site/index']);
+            }
+            throw new BadRequestHttpException(Yii::t('accounts', 'Your account can not be activated. Please contact us if you think this is a server error. Thank you.'));
+        }
+
+        return $this->render('signupActivationResend', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
      * Edits a single profile
      *
      * @param string $u The user name
@@ -316,71 +396,6 @@ class UserController extends Controller
         $model->delete();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-    * The signup activation page
-    * This page is only used with the registration email to activate a user account
-    *
-    * @param string $email The email adress from signup form
-    * @param string $auth_key The generated auth_key from signup
-    */
-    public function actionSignupActivation($email, $auth_key)
-    {
-        $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
-
-        if (($model = $modelPath::findByEmail($email)) !== null) {
-            if ($model->status === $modelPath::STATUS_INACTIVE) {
-                if ($model->auth_key === $auth_key) {
-                    $model->setScenario('signup-activation');
-                    $model->setSignupActivationDefaults();
-                    if ($model->save()) {
-                        Yii::$app->session->setFlash('success-activation', Yii::t('accounts', 'The activation was successful. You can login now.'));
-                    }
-                }
-            } else {
-                Yii::$app->session->setFlash('info-activation', Yii::t('accounts', 'Your account is already active.'));
-            }
-
-            $this->goLogin(['/site/index']);
-        }
-
-        throw new BadRequestHttpException(Yii::t('accounts', 'Your account could not be activated. Please contact us if you think this is a server error. Thank you.'));
-    }
-
-    /**
-    * Resends the activation email
-    */
-    public function actionSignupActivationResend() {
-        $model = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'signup-activation-resend']);
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if (($user = $model::findByEmail($model->email)) !== null) {
-                if ($user->status === $model::STATUS_INACTIVE) {
-
-                    $email = Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'signupActivation', ['user' => $user])
-                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
-                        ->setTo($user->email)
-                        ->setSubject(Yii::t('accounts', 'Account activation for {appname}', ['appname' => Yii::$app->name]))
-                        ->send();
-
-                    if ($email) {
-                        Yii::$app->session->setFlash('success-signup-activation-resend', Yii::t('accounts', 'Please check your email inbox for further action to account activation.'));
-                    } else {
-                        Yii::$app->session->setFlash('error-signup-activation-resend-email', Yii::t('accounts', 'The activation email could not be sent. Please contact us if you think this is a server error. Thank you.'));
-                    }
-
-                } else {
-                    Yii::$app->session->setFlash('info-activation', Yii::t('accounts', 'Your account is already active.'));
-                }
-                $this->goLogin(['/site/index']);
-            }
-            throw new BadRequestHttpException(Yii::t('accounts', 'Your account can not be activated. Please contact us if you think this is a server error. Thank you.'));
-        }
-
-        return $this->render('signupActivationResend', [
-            'model' => $model,
-        ]);
     }
 
     /**

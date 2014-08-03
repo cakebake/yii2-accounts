@@ -65,15 +65,26 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_ACTIVE = 10;
     const STATUS_INACTIVE = 15;
     const STATUS_BANNED = 20;
+    const STATUS_PENDING_SIGNUP = 25;
+    const STATUS_PENDING_EDIT = 30;
 
     public static function getDefinedStatusArray()
     {
-        return [
+        $data = [
             self::STATUS_ACTIVE => Yii::t('accounts', 'Active'),
             self::STATUS_INACTIVE => Yii::t('accounts', 'Inactive'),
             self::STATUS_BANNED => Yii::t('accounts', 'Banned'),
             self::STATUS_DELETED => Yii::t('accounts', 'Deleted'),
         ];
+
+        if (Yii::$app->getModule('accounts')->enableEmailSignupActivation) {
+            $data[self::STATUS_PENDING_SIGNUP] = Yii::t('accounts', 'Pending signup activation');
+        }
+        if (Yii::$app->getModule('accounts')->enableEmailEditActivation) {
+            $data[self::STATUS_PENDING_EDIT] = Yii::t('accounts', 'Pending account-edit activation');
+        }
+
+        return $data;
     }
 
     /**
@@ -157,7 +168,7 @@ class User extends ActiveRecord implements IdentityInterface
             'login' => Yii::$app->user->enableAutoLogin ? ['username', 'password', 'rememberMe'] : ['username', 'password'],
             'signup' => ['username', 'email', 'password', 'rePassword'],
             'edit' => ['username', 'email', 'password', 'rePassword', 'curPassword', 'status', 'role'],
-            'signup-activation' => [],
+            'account-activation' => [],
             'signup-activation-resend' => ['email'],
             'forgot-password' => ['email'],
             'reset-password' => ['password', 'rePassword'],
@@ -388,7 +399,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         if (Yii::$app->getModule('accounts')->enableEmailSignupActivation) {
             $this->setAuthKey();
-            $this->status = self::STATUS_INACTIVE;
+            $this->status = self::STATUS_PENDING_SIGNUP;
         } else {
             $this->status = self::STATUS_ACTIVE;
         }
@@ -403,7 +414,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function setEditUserConfig()
     {
         if (Yii::$app->getModule('accounts')->enableEmailEditActivation) {
-            $this->status = self::STATUS_INACTIVE;
+            $this->status = self::STATUS_PENDING_EDIT;
         }
 
         return true;
@@ -423,7 +434,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         if (Yii::$app->getModule('accounts')->enableEmailEditActivation) {
-            if ($this->status == self::STATUS_INACTIVE) {
+            if ($this->status == self::STATUS_PENDING_EDIT) {
                 $this->status = $oldAttributes['status'];
             }
         }
@@ -436,6 +447,18 @@ class User extends ActiveRecord implements IdentityInterface
     * Set user active and generate a new auth key
     */
     public function setSignupActivationDefaults()
+    {
+        $this->status = self::STATUS_ACTIVE;
+        $this->setAuthKey();
+
+        return true;
+    }
+
+    /**
+    * Edit activation user configuration
+    * Set user active and generate a new auth key
+    */
+    public function setEditActivationDefaults()
     {
         $this->status = self::STATUS_ACTIVE;
         $this->setAuthKey();
