@@ -261,26 +261,28 @@ class UserController extends Controller
             if ($identityChange && Yii::$app->getModule('accounts')->enableEmailEditActivation) {
                 if ($model->setAuthKey() && $model->setEditUserConfig() && $model->save(false)) {
 
-                    ActionLog::add(ActionLog::LOG_STATUS_INFO, null, $identity->id);
-
                     $email = Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'editActivation', ['user' => $model])
                         ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
                         ->setTo($model->email)
                         ->setSubject(Yii::t('accounts', 'Account activation for {appname}', ['appname' => Yii::$app->name]))
                         ->send();
 
-                    if ($email) {
-                        Yii::$app->user->logout();
-                        Yii::$app->session->setFlash('success-edit', Yii::t('accounts', 'Update was successful. Please check your email inbox for further action to account activation.'));
+//                    if ($email) {
+//                        Yii::$app->user->logout();
+//                        Yii::$app->session->setFlash('success-edit', Yii::t('accounts', 'Update was successful. Please check your email inbox for further action to account activation.'));
+//
+//                        return $this->goLogin(['/site/index']);
+//                    } else {
+//                        Yii::$app->session->setFlash('error-edit-email', Yii::t('accounts', 'Because the activation email could not be sent, we restored the current settings. Please contact us if you think this is a server error. Thank you.'));
+//                        $model->restoreEditUserConfig($oldAttributes);
+//
+//                        return $this->redirect(['profile', 'u' => $model->username]);
+//                    }
 
-                        return $this->goLogin(['/site/index']);
-                    } else {
-                        Yii::$app->session->setFlash('error-edit-email', Yii::t('accounts', 'Because the activation email could not be sent, we restored the current settings. Please contact us if you think this is a server error. Thank you.'));
-                        $model->restoreEditUserConfig($oldAttributes);
-
-                        return $this->redirect(['profile', 'u' => $model->username]);
-                    }
-
+                    //test
+                    Yii::$app->session->setFlash('error-edit-email', Yii::t('accounts', 'Test redirect... email'));
+                    return $this->redirect(['profile', 'u' => $model->username]);
+                    //test
 
                 }
             } else {
