@@ -116,44 +116,44 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             //username
-            ['username', 'required', 'on' => ['login', 'signup', 'edit']],
-            ['username', 'unique', 'on' => ['signup', 'edit']],
-            ['username', 'string', 'min' => 4, 'max' => 60, 'on' => ['login', 'signup', 'edit']],
-            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'on' => ['signup', 'edit'], 'message' => Yii::t('accounts', 'Username must consist of letters, numbers, underscores and dashes only.')],
-            ['username', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup', 'edit']],
+            ['username', 'required', 'on' => ['login', 'signup', 'edit', 'create']],
+            ['username', 'unique', 'on' => ['signup', 'edit', 'create']],
+            ['username', 'string', 'min' => 4, 'max' => 60, 'on' => ['login', 'signup', 'edit', 'create']],
+            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'on' => ['signup', 'edit', 'create'], 'message' => Yii::t('accounts', 'Username must consist of letters, numbers, underscores and dashes only.')],
+            ['username', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup', 'edit', 'create']],
 
             //email
-            ['email', 'required', 'on' => ['signup', 'edit', 'account-activation-resend', 'forgot-password']],
-            ['email', 'unique', 'on' => ['signup', 'edit']],
-            ['email', 'email', 'on' => ['signup', 'edit', 'account-activation-resend', 'forgot-password']],
-            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'edit', 'account-activation-resend', 'forgot-password']],
-            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup', 'edit', 'account-activation-resend', 'forgot-password']],
+            ['email', 'required', 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
+            ['email', 'unique', 'on' => ['signup', 'edit', 'create']],
+            ['email', 'email', 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
+            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
+            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
             ['email', 'exist', 'on' => ['account-activation-resend', 'forgot-password']],
 
             //password
             ['password', 'required', 'on' => ['login', 'signup', 'reset-password']],
-            ['password', 'validatePasswordRepeat', 'on' => ['edit']],
+            ['password', 'validatePasswordRepeat', 'on' => ['edit', 'create']],
             ['password', 'validateWithCurrentPassword', 'on' => ['edit']],
-            ['password', 'string', 'min' => 6, 'max' => 60, 'on' => ['login', 'signup', 'edit', 'reset-password']],
+            ['password', 'string', 'min' => 6, 'max' => 60, 'on' => ['login', 'signup', 'edit', 'create', 'reset-password']],
             ['password', 'validateLogin', 'on' => ['login']],
 
             //rePassword
             ['rePassword', 'required', 'on' => ['signup', 'reset-password']],
-            ['rePassword', 'string', 'on' => ['signup', 'edit', 'reset-password']],
-            ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['signup', 'edit', 'reset-password'], 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
+            ['rePassword', 'string', 'on' => ['signup', 'edit', 'create', 'reset-password']],
+            ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['signup', 'edit', 'create', 'reset-password'], 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
 
             //curPassword
             ['curPassword', 'string', 'min' => 6, 'max' => 60, 'on' => ['edit']],
 
             //status
-            ['status', 'required', 'on' => ['edit']],
+            ['status', 'required', 'on' => ['edit', 'create']],
             //['status', 'default', 'value' => self::STATUS_INACTIVE, 'on' => ['edit']],
-            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray()), 'on' => ['edit']],
+            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray()), 'on' => ['edit', 'create']],
 
             //role
-            ['role', 'required', 'on' => ['edit']],
+            ['role', 'required', 'on' => ['edit', 'create']],
             //['role', 'default', 'value' => self::ROLE_GUEST, 'on' => ['edit']],
-            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray()), 'on' => ['edit']],
+            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray()), 'on' => ['edit', 'create']],
 
             //rememberMe
             ['rememberMe', 'boolean', 'when' => function($model) { return Yii::$app->user->enableAutoLogin; }, 'on' => ['login']],
@@ -169,6 +169,7 @@ class User extends ActiveRecord implements IdentityInterface
             'login' => Yii::$app->user->enableAutoLogin ? ['username', 'password', 'rememberMe'] : ['username', 'password'],
             'signup' => ['username', 'email', 'password', 'rePassword'],
             'edit' => ['username', 'email', 'password', 'rePassword', 'curPassword', 'status', 'role'],
+            'create' => ['username', 'email', 'password', 'rePassword', 'status', 'role'],
             'account-activation' => [],
             'account-activation-resend' => ['email'],
             'forgot-password' => ['email'],
@@ -686,7 +687,7 @@ class User extends ActiveRecord implements IdentityInterface
     */
     public function validateWithCurrentPassword()
     {
-        if (!$this->curPassword || !$this->validatePassword($this->curPassword)) {
+        if (!$this->validatePassword($this->curPassword)) {
             $this->addError('curPassword', Yii::t('accounts', 'The current password does not match. Please try again.'));
         }
     }

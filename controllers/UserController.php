@@ -49,7 +49,7 @@ class UserController extends Controller
                         }
                     ],
                     [
-                        'actions' => ['logout', 'profile', 'edit', 'delete'],
+                        'actions' => ['logout', 'profile', 'create', 'edit', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -130,6 +130,36 @@ class UserController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    /**
+     * Creates a new Test model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $model = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'create']);
+
+        if (Yii::$app->request->isAjax) {
+            if ($model->load(Yii::$app->request->post())) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+
+                return ActiveForm::validate($model);
+            }
+
+            return false;
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            return $this->redirect(['profile', 'u' => $model->username]);
+        } else {
+            DebugBreak();
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
     }
 
     /**
