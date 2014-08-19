@@ -47,10 +47,12 @@ use yii\widgets\ActiveForm;
         <div class="panel-body">
             <?php if (!$model->isNewRecord) : ?>
                 <p><?= Yii::t('accounts', 'To change the password, you must enter the current password. Otherwise you can leave this fields blank.') ?></p>
-                <?= $form->field($model, 'curPassword')->textInput(['maxlength' => 60])->passwordInput() ?>
             <?php endif ?>
-            <?= $form->field($model, 'password')->textInput(['maxlength' => 60])->label(!$model->isNewRecord ? Yii::t('accounts', 'New Password') : null)->passwordInput() ?>
-            <?= $form->field($model, 'rePassword')->textInput(['maxlength' => 60])->passwordInput() ?>
+            <?= $form->field($model, 'password', ['enableAjaxValidation' => false])->textInput(['maxlength' => 60])->label(!$model->isNewRecord ? Yii::t('accounts', 'New Password') : null)->passwordInput() ?>
+            <?= $form->field($model, 'rePassword', ['enableAjaxValidation' => false])->textInput(['maxlength' => 60])->passwordInput() ?>
+            <?php if (!$model->isNewRecord) : ?>
+                <?= $form->field($model, 'curPassword', ['enableAjaxValidation' => false])->textInput(['maxlength' => 60])->passwordInput() ?>
+            <?php endif ?>
         </div>
     </div>
 

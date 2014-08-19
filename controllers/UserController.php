@@ -155,7 +155,7 @@ class UserController extends Controller
 
             return $this->redirect(['profile', 'u' => $model->username]);
         } else {
-            DebugBreak();
+            //DebugBreak();
             return $this->render('create', [
                 'model' => $model,
             ]);

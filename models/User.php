@@ -132,18 +132,45 @@ class User extends ActiveRecord implements IdentityInterface
 
             //password
             ['password', 'required', 'on' => ['login', 'signup', 'reset-password']],
-            ['password', 'validatePasswordRepeat', 'on' => ['edit', 'create']],
-            ['password', 'validateWithCurrentPassword', 'on' => ['edit']],
             ['password', 'string', 'min' => 6, 'max' => 60, 'on' => ['login', 'signup', 'edit', 'create', 'reset-password']],
+            ['password', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup', 'edit', 'create', 'reset-password']],
             ['password', 'validateLogin', 'on' => ['login']],
 
             //rePassword
             ['rePassword', 'required', 'on' => ['signup', 'reset-password']],
             ['rePassword', 'string', 'on' => ['signup', 'edit', 'create', 'reset-password']],
-            ['rePassword', 'compare', 'compareAttribute' => 'password', 'on' => ['signup', 'edit', 'create', 'reset-password'], 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
+            ['rePassword', 'filter', 'filter' => 'trim', 'on' => ['signup', 'edit', 'create', 'reset-password']],
+            ['rePassword', 'compare', 'compareAttribute' => 'password', 'skipOnEmpty' => false, 'on' => ['signup', 'edit', 'create', 'reset-password'], 'message' => Yii::t('accounts', 'Password must be repeated exactly.')],
 
             //curPassword
+            ['curPassword', 'required', 'skipOnEmpty' => false, 'on' => ['edit'],
+            'when' => function ($model) {
+                return !empty($model->password);
+            },
+            'whenClient' => "function (attribute, value) {
+                if (typeof document.getElementById('user-password').value == 'undefined') {
+                    return false;
+                } else if (document.getElementById('user-password').value == '') {
+                    return false;
+                } else {
+                    return true;
+                }
+            }"],
+            ['rePassword', 'filter', 'filter' => 'trim', 'on' => ['edit']],
             ['curPassword', 'string', 'min' => 6, 'max' => 60, 'on' => ['edit']],
+            ['curPassword', 'validateWithCurrentPassword', 'skipOnEmpty' => true, 'on' => ['edit'],
+            'when' => function ($model) {
+                return !empty($model->password);
+            },
+            'whenClient' => "function (attribute, value) {
+                if (typeof document.getElementById('user-password').value == 'undefined') {
+                    return false;
+                } else if (document.getElementById('user-password').value == '') {
+                    return false;
+                } else {
+                    return true;
+                }
+            }"],
 
             //status
             ['status', 'required', 'on' => ['edit', 'create']],
@@ -205,18 +232,6 @@ class User extends ActiveRecord implements IdentityInterface
     {
         if (!$this->validatePassword($this->curPassword)) {
             $this->addError('curPassword', Yii::t('accounts', 'The current password does not match. Please try again.'));
-            //return false;
-        }
-    }
-
-    /**
-    * Validates password attribute with rePassword field
-    */
-    public function validatePasswordRepeat()
-    {
-        if (!$this->rePassword) {
-            $this->addError('rePassword', Yii::t('accounts', 'Password must be repeated exactly.'));
-            //return false;
         }
     }
 
