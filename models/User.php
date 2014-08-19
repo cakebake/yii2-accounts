@@ -180,6 +180,47 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAuthKey() === $authKey;
+    }
+
+    /**
+     * Validates password
+     *
+     * @param  string  $password password to validate
+     * @return boolean if password provided is valid for current user
+     */
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
+    }
+
+    /**
+    * Validates current password attribute
+    */
+    public function validateWithCurrentPassword()
+    {
+        if (!$this->validatePassword($this->curPassword)) {
+            $this->addError('curPassword', Yii::t('accounts', 'The current password does not match. Please try again.'));
+            //return false;
+        }
+    }
+
+    /**
+    * Validates password attribute with rePassword field
+    */
+    public function validatePasswordRepeat()
+    {
+        if (!$this->rePassword) {
+            $this->addError('rePassword', Yii::t('accounts', 'Password must be repeated exactly.'));
+            //return false;
+        }
+    }
+
+    /**
      * Validates the login form
      */
     public function validateLogin()
@@ -532,6 +573,8 @@ class User extends ActiveRecord implements IdentityInterface
                     if (strpos($attr, '@')) {
                         $this->_user = self::findByEmail($attr);
                     } else {
+
+
                         $this->_user = self::findByUsername($attr);
                     }
                     break;
@@ -661,45 +704,6 @@ class User extends ActiveRecord implements IdentityInterface
     public function getAuthKey()
     {
         return $this->auth_key;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function validateAuthKey($authKey)
-    {
-        return $this->getAuthKey() === $authKey;
-    }
-
-    /**
-     * Validates password
-     *
-     * @param  string  $password password to validate
-     * @return boolean if password provided is valid for current user
-     */
-    public function validatePassword($password)
-    {
-        return Yii::$app->security->validatePassword($password, $this->password_hash);
-    }
-
-    /**
-    * Validates current password attribute
-    */
-    public function validateWithCurrentPassword()
-    {
-        if (!$this->validatePassword($this->curPassword)) {
-            $this->addError('curPassword', Yii::t('accounts', 'The current password does not match. Please try again.'));
-        }
-    }
-
-    /**
-    * Validates password attribute with rePassword field
-    */
-    public function validatePasswordRepeat()
-    {
-        if (!$this->rePassword) {
-            $this->addError('rePassword', Yii::t('accounts', 'Password must be repeated exactly.'));
-        }
     }
 
     /**
