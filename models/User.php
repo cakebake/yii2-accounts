@@ -259,6 +259,31 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @inheritdoc
      */
+/*    public function afterFind()
+    {
+        parent::afterFind();
+
+//        if (!$this->trigger(static::EVENT_AFTER_FIND))
+//            return false;
+//
+//        DebugBreak();
+
+        if ($data = $this->accountData) {
+            if (is_array($data) && count($data) != 0) {
+                foreach ($data as $k => $i) {
+                    $this->setAttribute($i->field_name, $i->field_value);
+
+                }
+            }
+        }
+
+        DebugBreak();
+
+    }*/
+
+    /**
+     * @inheritdoc
+     */
     public function beforeSave($insert)
     {
         if (!parent::beforeSave($insert))
@@ -554,6 +579,17 @@ class User extends ActiveRecord implements IdentityInterface
     public static function tableName()
     {
         return '{{%account}}';
+    }
+
+    /**
+    * Account Relational Data
+    * @return \yii\db\ActiveQuery
+    */
+    public function getAccountData()
+    {
+        $modelPath = Yii::$app->getModule('accounts')->getModel('account_data', false);
+
+        return $this->hasMany($modelPath::className(), ['account_id' => 'id']);
     }
 
     /**

@@ -54,4 +54,10 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
+    <pre>
+    <?php
+        //print_r($model->field_value);
+    ?>
+    </pre>
+
 </div>

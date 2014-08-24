@@ -60,7 +60,7 @@ To access the module, you need to add this to your application/console configura
 Check your database settings and run migrations from your console.
 For more informations see [Database Migration Documentation](http://www.yiiframework.com/doc-2.0/guide-console-migrate.html#applying-migrations)
 
-DB Table for users:
+DB Table for accounts:
 
 ```php yii migrate --migrationPath=@vendor/cakebake/yii2-accounts/migrations/```
 

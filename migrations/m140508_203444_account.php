@@ -22,7 +22,7 @@ class m140508_203444_account extends Migration
         }
 
         /**
-        * CREATE user table
+        * CREATE account table
         */
         $this->createTable('{{%account}}', [
             'id' => Schema::TYPE_BIGPK,
@@ -35,6 +35,18 @@ class m140508_203444_account extends Migration
             'status' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 10',
             'updated_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
             'created_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
+        ], $tableOptions);
+
+        /**
+        * CREATE account data table
+        */
+        $this->createTable('{{%account_data}}', [
+            'id' => Schema::TYPE_BIGPK,
+            'account_id' => Schema::TYPE_BIGINT . ' NOT NULL DEFAULT 0',
+            'field_type' => Schema::TYPE_BIGINT . ' NOT NULL DEFAULT 0',
+            'field_name' => Schema::TYPE_STRING . '(255) NOT NULL',
+            'field_value' => Schema::TYPE_TEXT . ' NULL',
+            'validation_rules' => Schema::TYPE_TEXT . ' NULL',
         ], $tableOptions);
 
         /**

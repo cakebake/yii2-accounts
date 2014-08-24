@@ -105,6 +105,7 @@ class Module extends \yii\base\Module
     protected function _setModelPaths() {
         $this->_models = [
             'user' => 'cakebake\accounts\models\User',
+            'account_data' => 'cakebake\accounts\models\AccountData',
         ];
     }
 }
