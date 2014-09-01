@@ -13,5 +13,6 @@ $this->params['breadcrumbs'][] = Yii::t('accounts', 'Edit Account');
 
     <?= $this->render('_form', [
         'model' => $model,
+        'profileData' => $profileData,
     ]) ?>
 </div>

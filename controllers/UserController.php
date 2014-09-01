@@ -362,6 +362,8 @@ class UserController extends Controller
             throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
         }
 
+        $profileData = $model->profileData;
+
         $model->setScenario('edit');
 
         if (Yii::$app->request->isAjax) {
@@ -374,7 +376,10 @@ class UserController extends Controller
             return false;
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        if (($model->load(Yii::$app->request->post()) && $model->validate()) &&
+            ($profileData->load(Yii::$app->request->post()) && $profileData->validate())) {
+
+            $model->link('profileData', $profileData);
 
             $identityChange = false;
             $oldAttributes = $model->oldAttributes;
@@ -416,6 +421,7 @@ class UserController extends Controller
 
         return $this->render('edit', [
             'model' => $model,
+            'profileData' => $profileData,
         ]);
     }
 

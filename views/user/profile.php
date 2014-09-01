@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\helpers\ArrayHelper;
 
 $this->title =  Yii::t('accounts', '{nicename}´s Profile', ['nicename' => $model->getNicename()]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Accounts'), 'url' => ['index']];
@@ -26,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= DetailView::widget([
         'model' => $model,
-        'attributes' => [
+        'attributes' => ArrayHelper::merge([
             [
                 'attribute' => 'username',
                 'label' => Yii::t('accounts', 'Name'),
@@ -51,13 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'html',
                 'value' => $model->getCreatedTime() . ' <span class="text-muted">(' . $model->created_at . ')</span>',
             ],
-        ],
+        ], $model->detailViewProfileData),
     ]) ?>
-
-    <pre>
-    <?php
-        //print_r($model->field_value);
-    ?>
-    </pre>
 
 </div>

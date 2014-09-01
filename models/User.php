@@ -9,6 +9,7 @@ use yii\db\Expression;
 use yii\data\ActiveDataProvider;
 use yii\base\NotSupportedException;
 use yii\base\Formatter;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the default model class for table "account" and user identity
@@ -255,31 +256,6 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
     }
-
-    /**
-     * @inheritdoc
-     */
-/*    public function afterFind()
-    {
-        parent::afterFind();
-
-//        if (!$this->trigger(static::EVENT_AFTER_FIND))
-//            return false;
-//
-//        DebugBreak();
-
-        if ($data = $this->accountData) {
-            if (is_array($data) && count($data) != 0) {
-                foreach ($data as $k => $i) {
-                    $this->setAttribute($i->field_name, $i->field_value);
-
-                }
-            }
-        }
-
-        DebugBreak();
-
-    }*/
 
     /**
      * @inheritdoc
@@ -587,9 +563,56 @@ class User extends ActiveRecord implements IdentityInterface
     */
     public function getAccountData()
     {
-        $modelPath = Yii::$app->getModule('accounts')->getModel('account_data', false);
+        $modelPath = Yii::$app->getModule('accounts')->getModel('account_data');
 
         return $this->hasMany($modelPath::className(), ['account_id' => 'id']);
+    }
+
+    /**
+    * Account Relational Data
+    * @return \yii\db\ActiveQuery
+    */
+    public function getProfileData()
+    {
+        $modelPath = Yii::$app->getModule('accounts')->getModel('account_data');
+
+        return $this->hasOne($modelPath::className(), ['account_id' => 'id'])->where(['field_type' => $modelPath::FIELD_TYPE_PROFILE]);
+    }
+
+    /**
+    * Converts relational object to DetailView structure
+    * @return array
+    */
+    public function getDetailViewProfileData()
+    {
+        $profileAttributes = [];
+        if ($this->hasProfileData()) {
+            foreach ($this->profileData['field_value'] as $key => $val) {
+                if (!empty($val) && is_scalar($val)) {
+                    $profileAttributes[] = [
+                        'attribute' => "profileData.field_value.$key",
+                        //'label' => Yii::t('accounts', $key),
+                        'label' => $this->getAttributeLabel($key),
+                        'value' => $val,
+                    ];
+                }
+            }
+        }
+
+        return $profileAttributes;
+    }
+
+    /**
+    * Check if relation data exists
+    * @return bool true|false
+    */
+    public function hasProfileData()
+    {
+        if ($this->profileData !== null && is_array($this->profileData['field_value']) && !empty($this->profileData['field_value'])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -740,6 +763,14 @@ class User extends ActiveRecord implements IdentityInterface
 
         return $user;
     }
+
+    /**
+     * @inheritdoc
+     */
+//    public static function find()
+//    {
+//        return parent::find()->joinWith('accountData');
+//    }
 
     /**
      * @inheritdoc

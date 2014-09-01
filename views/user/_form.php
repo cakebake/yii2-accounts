@@ -17,6 +17,21 @@ use yii\widgets\ActiveForm;
         ],
     ]); ?>
 
+    <?php if ($model->hasProfileData()) : ?>
+        <div class="panel panel-profile panel-default">
+            <div class="panel-heading">
+                <?= Yii::t('accounts', 'Profile') ?>
+            </div>
+            <div class="panel-body">
+                <?php foreach ($model->profileData['field_value'] as $key => $val) : ?>
+
+                    <?= $form->field($profileData, $key)->textInput() ?>
+
+                <?php endforeach ?>
+            </div>
+        </div>
+    <?php endif ?>
+
     <div class="panel panel-settings panel-default">
         <div class="panel-heading">
             <?= Yii::t('accounts', 'Settings') ?>
