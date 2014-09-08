@@ -593,8 +593,7 @@ class User extends ActiveRecord implements IdentityInterface
 
                     $data[] = [
                         'attribute' => "profileData.$virtualAttribute",
-                        //'label' => Yii::t('accounts', $this->getAttributeLabel($virtualAttribute)),
-                        'label' => $virtualAttribute,
+                        'label' => Yii::t('accounts', $this->getAttributeLabel($virtualAttribute)),
                         'value' => $this->profileData->{$virtualAttribute},
                     ];
                 }
