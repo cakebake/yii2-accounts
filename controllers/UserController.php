@@ -362,7 +362,7 @@ class UserController extends Controller
             throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
         }
 
-        $profileData = $model->profileData;
+        $profileData = ($model->profileData !== null) ? $model->profileData : Yii::$app->getModule('accounts')->getModel('account_data');
 
         $model->setScenario('edit');
 
@@ -379,6 +379,7 @@ class UserController extends Controller
         if (($model->load(Yii::$app->request->post()) && $model->validate()) &&
             ($profileData->load(Yii::$app->request->post()) && $profileData->validate())) {
 
+            $profileData->field_type = $profileData::FIELD_TYPE_PROFILE;
             $model->link('profileData', $profileData);
 
             $identityChange = false;

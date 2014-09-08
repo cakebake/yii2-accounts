@@ -4,6 +4,7 @@ namespace cakebake\accounts\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use cakebake\behaviors\ScalableBehavior;
 
 /**
  * This is the model class for table "app_account_data".
@@ -23,7 +24,6 @@ class AccountData extends \yii\db\ActiveRecord
     const FIELD_TYPE_STORAGE = 0;
     const FIELD_TYPE_PROFILE = 10;
 
-
     /**
      * @inheritdoc
      */
@@ -38,46 +38,43 @@ class AccountData extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
-            [
-                'class' => 'cakebake\accounts\behaviors\DataBehavior',
-                'serializedAttributes' => ['field_value'],
-                'virtualAttributes' => ['about_me', 'birthday']
+            'scaleable' => [
+                'class' => ScalableBehavior::className(),
+                'scalableAttribute' => 'field_value',
+                'virtualAttributes' => self::virtualAttributes()
             ],
         ];
     }
 
     /**
-    * Account Relational Data
-    * @return \yii\db\ActiveQuery
+    * Defines the virtual attributes, which can be stored by the behavior
+    * @return array The virtual attributes keys
     */
-//    public function getAccountDataUser()
-//    {
-//        $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
-//
-//        return $this->hasMany($modelPath::className(), ['id' => 'account_id']);
-//    }
+    public function virtualAttributes()
+    {
+        return ['about_me', 'birthday'];
+    }
+
+    /**
+    * Defines the validation rules of the virtual attributes
+    * @return array The virtual attributes rules
+    */
+    public function virtualAttributesRules()
+    {
+        return [
+            ['about_me', 'string'],
+            ['birthday', 'string', 'max' => 60],
+        ];
+    }
 
     /**
      * @inheritdoc
      */
     public function rules()
     {
-        return [
-            //field_value
-            //['field_value', 'validateValues'],
-            [['about_me', 'birthday'], 'safe'],
-//            [['account_id', 'field_type'], 'integer'],
-//            [['field_name'], 'required'],
-//            [['field_value', 'validation_rules'], 'string'],
-//            [['field_name'], 'string', 'max' => 255]
-        ];
+        return ArrayHelper::merge(
+            self::virtualAttributesRules(),
+            [] //static attributes, if there are any to define
+        );
     }
-
-//    public function validateValues($attribute, $params)
-//    {
-//        if (!is_array($this->$attribute)) {
-//            $this->addError($attribute, 'The data format was not accepted.');
-//        }
-//    }
-
 }

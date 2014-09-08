@@ -558,14 +558,12 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-    * Account Relational Data
-    * @return \yii\db\ActiveQuery
+    * Get the virtual profile fields defined in AccountData model
+    * @return array
     */
-    public function getAccountData()
+    public function getProfileFields()
     {
-        $modelPath = Yii::$app->getModule('accounts')->getModel('account_data');
-
-        return $this->hasMany($modelPath::className(), ['account_id' => 'id']);
+        return (array)Yii::$app->getModule('accounts')->getModel('account_data')->virtualAttributes();
     }
 
     /**
@@ -585,34 +583,26 @@ class User extends ActiveRecord implements IdentityInterface
     */
     public function getDetailViewProfileData()
     {
-        $profileAttributes = [];
-        if ($this->hasProfileData()) {
-            foreach ($this->profileData['field_value'] as $key => $val) {
-                if (!empty($val) && is_scalar($val)) {
-                    $profileAttributes[] = [
-                        'attribute' => "profileData.field_value.$key",
-                        //'label' => Yii::t('accounts', $key),
-                        'label' => $this->getAttributeLabel($key),
-                        'value' => $val,
+        $data = [];
+        if (!empty($this->profileFields) && $this->profileData !== null) {
+            foreach ($this->profileFields as $virtualAttribute) {
+
+                if (isset($this->profileData->{$virtualAttribute}) &&
+                    !empty($this->profileData->{$virtualAttribute}) &&
+                    is_scalar($this->profileData->{$virtualAttribute})) {
+
+                    $data[] = [
+                        'attribute' => "profileData.$virtualAttribute",
+                        //'label' => Yii::t('accounts', $this->getAttributeLabel($virtualAttribute)),
+                        'label' => $virtualAttribute,
+                        'value' => $this->profileData->{$virtualAttribute},
                     ];
                 }
+
             }
         }
 
-        return $profileAttributes;
-    }
-
-    /**
-    * Check if relation data exists
-    * @return bool true|false
-    */
-    public function hasProfileData()
-    {
-        if ($this->profileData !== null && is_array($this->profileData['field_value']) && !empty($this->profileData['field_value'])) {
-            return true;
-        }
-
-        return false;
+        return $data;
     }
 
     /**
