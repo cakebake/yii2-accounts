@@ -8,7 +8,7 @@ use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\data\ActiveDataProvider;
 use yii\base\NotSupportedException;
-use yii\base\Formatter;
+use yii\i18n\Formatter;
 use yii\helpers\ArrayHelper;
 
 /**
