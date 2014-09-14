@@ -563,7 +563,7 @@ class User extends ActiveRecord implements IdentityInterface
     */
     public function getProfileFields()
     {
-        return (array)Yii::$app->getModule('accounts')->getModel('account_data')->virtualAttributes();
+        return (array)Yii::$app->getModule('accounts')->getModel('account_data')->virtualAttributesDefinition();
     }
 
     /**
@@ -583,19 +583,34 @@ class User extends ActiveRecord implements IdentityInterface
     */
     public function getDetailViewProfileData()
     {
+        $profileFields = array_keys($this->profileFields);
         $data = [];
-        if (!empty($this->profileFields) && $this->profileData !== null) {
-            foreach ($this->profileFields as $virtualAttribute) {
 
-                if (isset($this->profileData->{$virtualAttribute}) &&
-                    !empty($this->profileData->{$virtualAttribute}) &&
-                    is_scalar($this->profileData->{$virtualAttribute})) {
+        if (!empty($profileFields) && $this->profileData !== null) {
+            foreach ($profileFields as $name) {
 
-                    $data[] = [
-                        'attribute' => "profileData.$virtualAttribute",
-                        'label' => Yii::t('accounts', $this->getAttributeLabel($virtualAttribute)),
-                        'value' => $this->profileData->{$virtualAttribute},
-                    ];
+                if (isset($this->profileData->{$name}) &&
+                    !empty($this->profileData->{$name}) &&
+                    is_scalar($this->profileData->{$name})) {
+
+                    switch ($this->profileFields[$name]['field_type']) {
+                        case 'date':
+                            $format = new Formatter;
+                            $data[] = [
+                                'attribute' => "profileData.$name",
+                                'label' => $this->profileFields[$name]['label'],
+                                'format' => 'html',
+                                'value' => $format->format($this->profileData->{$name}, 'RelativeTime') . ' <span class="text-muted">(' . $this->profileData->{$name} . ')</span>',
+                            ];
+                            break;
+                        default:
+                            $data[] = [
+                                'attribute' => "profileData.$name",
+                                'label' => $this->profileFields[$name]['label'],
+                                'value' => $this->profileData->{$name},
+                            ];
+                            break;
+                    }
                 }
 
             }

@@ -67,21 +67,24 @@ class AccountData extends \yii\db\ActiveRecord
                 'name' => 'about_me',
                 'label' => Yii::t('accounts', $this->getAttributeLabel('about_me')),
                 'field_type' => 'textarea',
-                'default_value' => null,
-                'hint' => Yii::t('accounts', 'Write something about you...'),
+                'hint' => null,
+                'input_options' => [],
                 'rules' => [
                     ['about_me', 'string'],
-                    ['about_me', 'required'],
                 ]
             ],
             'birthday' => [
                 'name' => 'birthday',
                 'label' => Yii::t('accounts', $this->getAttributeLabel('birthday')),
-                'field_type' => 'text',
-                'default_value' => null,
-                'hint' => null,
+                'field_type' => 'date',
+                'hint' => Yii::t('accounts', 'The default format is <code>Y-m-d</code>.'),
+                'input_options' => [
+                    'placeholder' => Yii::t('accounts', 'Your birthday...'),
+                    'maxlength' => 10,
+                ],
                 'rules' => [
-                    ['birthday', 'string', 'max' => 60],
+                    ['birthday', 'string', 'max' => 10],
+                    ['birthday', 'date'],
                 ]
             ],
         ];

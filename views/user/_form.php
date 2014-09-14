@@ -23,8 +23,26 @@ use yii\widgets\ActiveForm;
                 <?= Yii::t('accounts', 'Profile') ?>
             </div>
             <div class="panel-body">
-                <?php foreach ($model->profileFields as $virtualAttribute) : ?>
-                    <?= $form->field($profileData, $virtualAttribute)->textInput() ?>
+                <?php foreach ($model->profileFields as $key => $attribute) : ?>
+                    <?php
+                        $field = $form->field($profileData, $attribute['name']);
+                        $field = $field->label($attribute['label']);
+                        $field = $field->hint($attribute['hint']);
+
+                        switch ($attribute['field_type']) {
+                            case 'textarea':
+                                $field = $field->textarea($attribute['input_options']);
+                                break;
+                            case 'textinput':
+                                $field = $field->textInput($attribute['input_options']);
+                                break;
+                            default:
+                                $field = $field->textInput($attribute['input_options']);
+                                break;
+                        }
+
+                        echo $field;
+                    ?>
                 <?php endforeach ?>
             </div>
         </div>
