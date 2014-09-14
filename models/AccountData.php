@@ -41,18 +41,59 @@ class AccountData extends \yii\db\ActiveRecord
             'scaleable' => [
                 'class' => ScalableBehavior::className(),
                 'scalableAttribute' => 'field_value',
-                'virtualAttributes' => self::virtualAttributes()
+                'virtualAttributes' => $this->virtualAttributes()
             ],
         ];
     }
 
     /**
+    * @var array For internal use
+    */
+    private $_virtualAttributesDefinition = [];
+
+    /**
     * Defines the virtual attributes, which can be stored by the behavior
+    *
+    * @return array The virtual attributes keys
+    */
+    public function virtualAttributesDefinition()
+    {
+        if (!empty($this->_virtualAttributesDefinition)) {
+            return $this->_virtualAttributesDefinition;
+        }
+
+        return $this->_virtualAttributesDefinition = [
+            'about_me' => [
+                'name' => 'about_me',
+                'label' => Yii::t('accounts', $this->getAttributeLabel('about_me')),
+                'field_type' => 'textarea',
+                'default_value' => null,
+                'hint' => Yii::t('accounts', 'Write something about you...'),
+                'rules' => [
+                    ['about_me', 'string'],
+                    ['about_me', 'required'],
+                ]
+            ],
+            'birthday' => [
+                'name' => 'birthday',
+                'label' => Yii::t('accounts', $this->getAttributeLabel('birthday')),
+                'field_type' => 'text',
+                'default_value' => null,
+                'hint' => null,
+                'rules' => [
+                    ['birthday', 'string', 'max' => 60],
+                ]
+            ],
+        ];
+    }
+
+    /**
+    * Returns the virtual attributes
     * @return array The virtual attributes keys
     */
     public function virtualAttributes()
     {
-        return ['about_me', 'birthday'];
+        return array_keys($this->virtualAttributesDefinition());
     }
 
     /**
@@ -61,10 +102,12 @@ class AccountData extends \yii\db\ActiveRecord
     */
     public function virtualAttributesRules()
     {
-        return [
-            ['about_me', 'string'],
-            ['birthday', 'string', 'max' => 60],
-        ];
+        $rules = [];
+        foreach ($this->virtualAttributesDefinition() as $attribute) {
+            $rules = ArrayHelper::merge($rules, $attribute['rules']);
+        }
+
+        return $rules;
     }
 
     /**
@@ -73,7 +116,7 @@ class AccountData extends \yii\db\ActiveRecord
     public function rules()
     {
         return ArrayHelper::merge(
-            self::virtualAttributesRules(),
+            $this->virtualAttributesRules(),
             [] //static attributes, if there are any to define
         );
     }
