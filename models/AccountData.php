@@ -47,7 +47,7 @@ class AccountData extends \yii\db\ActiveRecord
     }
 
     /**
-    * @var array For internal use
+    * @var array Virtual attributes definition with all of its rules and settings
     */
     private $_virtualAttributesDefinition = [];
 
@@ -84,7 +84,7 @@ class AccountData extends \yii\db\ActiveRecord
                 ],
                 'rules' => [
                     ['birthday', 'string', 'max' => 10],
-                    ['birthday', 'date'],
+                    //['birthday', 'date'], @todo 2014-09-21 check if error comes IntlDateFormatter::parse(): Date parsing failed
                 ]
             ],
         ];

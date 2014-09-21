@@ -570,7 +570,7 @@ class User extends ActiveRecord implements IdentityInterface
     * Account Relational Data
     * @return \yii\db\ActiveQuery
     */
-    public function getProfileData()
+    public function getProfileModel()
     {
         $modelPath = Yii::$app->getModule('accounts')->getModel('account_data');
 
@@ -586,12 +586,12 @@ class User extends ActiveRecord implements IdentityInterface
         $profileFields = array_keys($this->profileFields);
         $data = [];
 
-        if (!empty($profileFields) && $this->profileData !== null) {
+        if (!empty($profileFields) && $this->profileModel !== null) {
             foreach ($profileFields as $name) {
 
-                if (isset($this->profileData->{$name}) &&
-                    !empty($this->profileData->{$name}) &&
-                    is_scalar($this->profileData->{$name})) {
+                if (isset($this->profileModel->{$name}) &&
+                    !empty($this->profileModel->{$name}) &&
+                    is_scalar($this->profileModel->{$name})) {
 
                     switch ($this->profileFields[$name]['field_type']) {
                         case 'date':
@@ -600,14 +600,14 @@ class User extends ActiveRecord implements IdentityInterface
                                 'attribute' => "profileData.$name",
                                 'label' => $this->profileFields[$name]['label'],
                                 'format' => 'html',
-                                'value' => $format->format($this->profileData->{$name}, 'RelativeTime') . ' <span class="text-muted">(' . $this->profileData->{$name} . ')</span>',
+                                'value' => $format->format($this->profileModel->{$name}, 'RelativeTime') . ' <span class="text-muted">(' . $this->profileModel->{$name} . ')</span>',
                             ];
                             break;
                         default:
                             $data[] = [
                                 'attribute' => "profileData.$name",
                                 'label' => $this->profileFields[$name]['label'],
-                                'value' => $this->profileData->{$name},
+                                'value' => $this->profileModel->{$name},
                             ];
                             break;
                     }

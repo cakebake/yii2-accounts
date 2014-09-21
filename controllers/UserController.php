@@ -133,36 +133,6 @@ class UserController extends Controller
     }
 
     /**
-     * Creates a new Test model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'create']);
-
-        if (Yii::$app->request->isAjax) {
-            if ($model->load(Yii::$app->request->post())) {
-                Yii::$app->response->format = Response::FORMAT_JSON;
-
-                return ActiveForm::validate($model);
-            }
-
-            return false;
-        }
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-
-            return $this->redirect(['profile', 'u' => $model->username]);
-        } else {
-            //DebugBreak();
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    /**
     * The register action
     */
     public function actionSignup()
@@ -349,6 +319,43 @@ class UserController extends Controller
     }
 
     /**
+     * Creates a new User model with additional account model
+     * If creation is successful, the browser will be redirected to the accounts profile page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $userModel = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'create']);
+        $profileModel = Yii::$app->getModule('accounts')->getModel('account_data');
+
+        if (Yii::$app->request->isAjax) {
+            if ($userModel->load(Yii::$app->request->post())) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+
+                return ActiveForm::validate($userModel);
+            }
+
+            return false;
+        }
+
+        if (($userModel->load(Yii::$app->request->post()) && $userModel->validate()) &&
+            ($profileModel->load(Yii::$app->request->post()) && $profileModel->validate())) {
+
+            if ($userModel->save(false)) {
+                $profileModel->field_type = $profileModel::FIELD_TYPE_PROFILE;
+                $userModel->link('profileModel', $profileModel);
+
+                return $this->redirect(['profile', 'u' => $userModel->username]);
+            }
+        }
+
+        return $this->render('create', [
+            'model' => $userModel,
+            'profileModel' => $profileModel,
+        ]);
+    }
+
+    /**
      * Edits a single profile
      *
      * @param string $u The user name
@@ -356,47 +363,47 @@ class UserController extends Controller
      */
     public function actionEdit($u)
     {
-        $modelPath = Yii::$app->getModule('accounts')->getModel('user', false);
+        $userModelPath = Yii::$app->getModule('accounts')->getModel('user', false);
 
-        if (($model = $modelPath::findByUsername($u)) === null) {
+        if (($userModel = $userModelPath::findByUsername($u)) === null) {
             throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
         }
 
-        $profileData = ($model->profileData !== null) ? $model->profileData : Yii::$app->getModule('accounts')->getModel('account_data');
+        $profileModel = ($userModel->profileModel !== null) ? $userModel->profileModel : Yii::$app->getModule('accounts')->getModel('account_data');
 
-        $model->setScenario('edit');
+        $userModel->setScenario('edit');
 
         if (Yii::$app->request->isAjax) {
-            if ($model->load(Yii::$app->request->post())) {
+            if ($userModel->load(Yii::$app->request->post())) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
 
-                return ActiveForm::validate($model);
+                return ActiveForm::validate($userModel);
             }
 
             return false;
         }
 
-        if (($model->load(Yii::$app->request->post()) && $model->validate()) &&
-            ($profileData->load(Yii::$app->request->post()) && $profileData->validate())) {
+        if (($userModel->load(Yii::$app->request->post()) && $userModel->validate()) &&
+            ($profileModel->load(Yii::$app->request->post()) && $profileModel->validate())) {
 
-            $profileData->field_type = $profileData::FIELD_TYPE_PROFILE;
-            $model->link('profileData', $profileData);
+            $profileModel->field_type = $profileModel::FIELD_TYPE_PROFILE;
+            $userModel->link('profileModel', $profileModel);
 
             $identityChange = false;
-            $oldAttributes = $model->oldAttributes;
-            if ($model->username != $oldAttributes['username']) {
+            $oldAttributes = $userModel->oldAttributes;
+            if ($userModel->username != $oldAttributes['username']) {
                 $identityChange = true;
             }
-            if ($model->email != $oldAttributes['email']) {
+            if ($userModel->email != $oldAttributes['email']) {
                 $identityChange = true;
             }
 
             if ($identityChange && Yii::$app->getModule('accounts')->enableEmailEditActivation) {
-                if ($model->setAuthKey() && $model->setEditUserConfig() && $model->save(false)) {
+                if ($userModel->setAuthKey() && $userModel->setEditUserConfig() && $userModel->save(false)) {
 
-                    $email = Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'editActivation', ['user' => $model])
+                    $email = Yii::$app->mail->compose(Yii::$app->getModule('accounts')->emailViewsPath . 'editActivation', ['user' => $userModel])
                         ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
-                        ->setTo($model->email)
+                        ->setTo($userModel->email)
                         ->setSubject(Yii::t('accounts', 'Account activation for {appname}', ['appname' => Yii::$app->name]))
                         ->send();
 
@@ -407,22 +414,22 @@ class UserController extends Controller
                         return $this->goLogin(['/site/index']);
                     } else {
                         Yii::$app->session->setFlash('error-edit', Yii::t('accounts', 'Because the activation email could not be sent, we restored the current settings. Please contact us if you think this is a server error. Thank you.'));
-                        $model->restoreEditUserConfig($oldAttributes);
+                        $userModel->restoreEditUserConfig($oldAttributes);
 
-                        return $this->redirect(['profile', 'u' => $model->username]);
+                        return $this->redirect(['profile', 'u' => $userModel->username]);
                     }
 
                 }
             } else {
-                if ($model->save(false)) {
-                    return $this->redirect(['profile', 'u' => $model->username]);
+                if ($userModel->save(false)) {
+                    return $this->redirect(['profile', 'u' => $userModel->username]);
                 }
             }
         }
 
         return $this->render('edit', [
-            'model' => $model,
-            'profileData' => $profileData,
+            'model' => $userModel,
+            'profileModel' => $profileModel,
         ]);
     }
 

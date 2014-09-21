@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
             <div class="panel-body">
                 <?php foreach ($model->profileFields as $key => $attribute) : ?>
                     <?php
-                        $field = $form->field($profileData, $attribute['name']);
+                        $field = $form->field($profileModel, $attribute['name']);
                         $field = $field->label($attribute['label']);
                         $field = $field->hint($attribute['hint']);
 
