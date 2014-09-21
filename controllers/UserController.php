@@ -49,7 +49,7 @@ class UserController extends Controller
                         }
                     ],
                     [
-                        'actions' => ['logout', 'index', 'profile', 'create', 'edit', 'delete', 'delete-selected'],
+                        'actions' => ['logout', 'index', 'profile', 'create', 'edit', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -60,7 +60,6 @@ class UserController extends Controller
                 'actions' => [
                     'logout' => ['post'],
                     'delete' => ['post'],
-                    //'delete-selected' => ['post'],
                     'account-activation' => ['get'],
                 ],
             ],
@@ -84,12 +83,12 @@ class UserController extends Controller
     }
 
     /**
-     * Lists all Test models.
+     * Lists all Accounts
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = Yii::$app->getModule('accounts')->getModel('user');
+        $searchModel = Yii::$app->getModule('accounts')->getModel('user', true, ['scenario' => 'search']);
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
@@ -466,35 +465,6 @@ class UserController extends Controller
         $model->setScenario('delete');
 
         $model->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-    * Deletes one or more existring Admin models
-    * If deletion is successful, the browser will be redirected to the 'index' page.
-    * @return {\yii\web\Response|Response|static}
-    */
-    public function actionDeleteSelected()
-    {
-        $post = Yii::$app->request->post();
-
-        if (empty($post) || !isset($post['ids']) || !is_array($post['ids']) || empty($post['ids']))
-            return $this->redirect(['index']);
-
-        $models = $this->findModel($post['ids']);
-
-        foreach ($models as $k => $model) {
-            if ($model->delete()) {
-                Yii::$app->getSession()->setFlash('success-'.$k, Yii::t('accounts', '{nicename}´s account has been deleted successfully.', [
-                    'nicename' => $model->getNicename(),
-                ]));
-            } else {
-                Yii::$app->getSession()->setFlash('error-'.$k, Yii::t('accounts', 'Sorry, we are unable to delete account for user {nicename}.', [
-                    'nicename' => $model->getNicename(),
-                ]));
-            }
-        }
 
         return $this->redirect(['index']);
     }

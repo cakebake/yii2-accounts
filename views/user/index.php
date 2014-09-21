@@ -12,13 +12,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a(Yii::t('accounts', 'Delete Selected'), ['delete-selected'], [
-            'class' => 'accounts-index-grid-bulk-action btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('accounts', 'Are you sure you want to delete these items?'),
-                //'method' => 'post',
-            ],
-        ]) ?>
     </p>
 
     <?= cakebake\accounts\widgets\Alert::widget(); ?>
@@ -28,7 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\CheckboxColumn'],
             [
                 'attribute' => 'username',
                 'label' => Yii::t('accounts', 'Name'),
@@ -56,35 +48,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => Html::activeDropDownList($searchModel, 'role', $searchModel->getDefinedRolesArray(), ['class' => 'form-control', 'prompt' => Yii::t('accounts', 'Please select')])
             ],
             'created_at:RelativeTime',
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'buttons' => [
+                    'view' => function ($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-user"></span>', ['profile', 'u' => $model->username], [
+                            'title' => Yii::t('yii', 'View'),
+                            'data-pjax' => '0',
+                        ]);
+                    },
+                    'update' => function ($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-cog"></span>', ['edit', 'u' => $model->username], [
+                            'title' => Yii::t('yii', 'Update'),
+                            'data-pjax' => '0',
+                        ]);
+                    },
+                ],
+            ],
         ],
     ]); ?>
-
-    <?php $this->registerJs("
-    $(document).on('click', '.accounts-index-grid-bulk-action', function(e){
-        e.preventDefault();
-        var keys = $('#accounts-index-grid').yiiGridView('getSelectedRows');
-
-        if (keys.length == 0) {
-            alert('" . Yii::t('accounts', 'No items were selected.') . "');
-            return false;
-        } else {
-            $.ajax({
-                url: $(this).attr('href'),
-                type: 'POST',
-                data: {
-                    _csrf: yii.getCsrfToken(),
-                    ids: keys
-                },
-                success: function(data) {
-                    //console.log(data);
-                },
-                error: function(data) {
-                    //console.log(data);
-                }
-            });
-        }
-    });
-    "); ?>
 
 </div>

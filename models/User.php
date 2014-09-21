@@ -119,16 +119,16 @@ class User extends ActiveRecord implements IdentityInterface
             //username
             ['username', 'required', 'on' => ['login', 'signup', 'edit', 'create']],
             ['username', 'unique', 'on' => ['signup', 'edit', 'create']],
-            ['username', 'string', 'min' => 4, 'max' => 60, 'on' => ['login', 'signup', 'edit', 'create']],
-            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'on' => ['signup', 'edit', 'create'], 'message' => Yii::t('accounts', 'Username must consist of letters, numbers, underscores and dashes only.')],
-            ['username', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup', 'edit', 'create']],
+            ['username', 'string', 'min' => 4, 'max' => 60, 'on' => ['login', 'signup', 'edit', 'create', 'search']],
+            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'on' => ['signup', 'edit', 'create', 'search'], 'message' => Yii::t('accounts', 'Username must consist of letters, numbers, underscores and dashes only.')],
+            ['username', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup', 'edit', 'create', 'search']],
 
             //email
             ['email', 'required', 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
             ['email', 'unique', 'on' => ['signup', 'edit', 'create']],
             ['email', 'email', 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
-            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
-            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
+            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password', 'search']],
+            ['email', 'filter', 'filter' => 'trim', 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password', 'search']],
             ['email', 'exist', 'on' => ['account-activation-resend', 'forgot-password']],
 
             //password
@@ -176,12 +176,12 @@ class User extends ActiveRecord implements IdentityInterface
             //status
             ['status', 'required', 'on' => ['edit', 'create']],
             //['status', 'default', 'value' => self::STATUS_INACTIVE, 'on' => ['edit']],
-            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray()), 'on' => ['edit', 'create']],
+            ['status', 'in', 'range' => array_keys(self::getDefinedStatusArray()), 'on' => ['edit', 'create', 'search']],
 
             //role
             ['role', 'required', 'on' => ['edit', 'create']],
             //['role', 'default', 'value' => self::ROLE_GUEST, 'on' => ['edit']],
-            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray()), 'on' => ['edit', 'create']],
+            ['role', 'in', 'range' => array_keys(self::getDefinedRolesArray()), 'on' => ['edit', 'create', 'search']],
 
             //rememberMe
             ['rememberMe', 'boolean', 'when' => function($model) { return Yii::$app->user->enableAutoLogin; }, 'on' => ['login']],
@@ -204,6 +204,7 @@ class User extends ActiveRecord implements IdentityInterface
             'reset-password' => ['password', 'rePassword'],
             'generate-password-reset-token' => [],
             'delete' => [],
+            'search' => ['username', 'email', 'status', 'role'],
         ];
     }
 
