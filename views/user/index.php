@@ -10,11 +10,24 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a(Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success']) ?>
+    <p class="clearfix">
+        <?= Html::a(Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success pull-right']) ?>
+        <?= Html::button('<span class="glyphicon glyphicon-search"></span> ' . Yii::t('accounts', 'Advanced search'), ['id' => 'toggle-advanced-search', 'class' => 'btn btn-default pull-left']) ?>
     </p>
 
+    <?php $this->registerJs("
+    $('.accounts-index .accounts-search').hide();
+    $(document).on('click', '#toggle-advanced-search', function(e){
+       //e.preventDefault();
+       $('.accounts-index .accounts-search').slideToggle();
+    });
+    "); ?>
+
     <?= cakebake\accounts\widgets\Alert::widget(); ?>
+
+    <?= $this->render('_search', [
+        'model' => $searchModel
+    ]); ?>
 
     <?= GridView::widget([
         'id' => 'accounts-index-grid',
