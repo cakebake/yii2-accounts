@@ -11,8 +11,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p class="clearfix">
-        <?= Html::a(Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success pull-right']) ?>
-        <?= Html::button('<span class="glyphicon glyphicon-search"></span> ' . Yii::t('accounts', 'Advanced search'), ['id' => 'toggle-advanced-search', 'class' => 'btn btn-default pull-left']) ?>
+        <?= Html::a('<span class="glyphicon glyphicon-plus"></span> ' . Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success pull-right']) ?>
+        <?= Html::button('<span class="glyphicon glyphicon-search"></span> ' . Yii::t('accounts', 'Advanced search'), ['id' => 'toggle-advanced-search', 'class' => 'btn btn-default']) ?>
+        <?= Html::a('<span class="glyphicon glyphicon-refresh"></span> ' . Yii::t('accounts', 'Refresh / Reset Filters'), ['index'], ['class' => 'btn btn-default']) ?>
     </p>
 
     <?php $this->registerJs("

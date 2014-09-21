@@ -119,7 +119,8 @@ class User extends ActiveRecord implements IdentityInterface
             //username
             ['username', 'required', 'on' => ['login', 'signup', 'edit', 'create']],
             ['username', 'unique', 'on' => ['signup', 'edit', 'create']],
-            ['username', 'string', 'min' => 4, 'max' => 60, 'on' => ['login', 'signup', 'edit', 'create', 'search']],
+            ['username', 'string', 'min' => 4, 'max' => 60, 'on' => ['login', 'signup', 'edit', 'create']],
+            ['username', 'string', 'on' => ['search']],
             ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'on' => ['signup', 'edit', 'create', 'search'], 'message' => Yii::t('accounts', 'Username must consist of letters, numbers, underscores and dashes only.')],
             ['username', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup', 'edit', 'create', 'search']],
 
@@ -127,7 +128,8 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'required', 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
             ['email', 'unique', 'on' => ['signup', 'edit', 'create']],
             ['email', 'email', 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
-            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password', 'search']],
+            ['email', 'string', 'min' => 4, 'max' => 60, 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password']],
+            ['email', 'string', 'on' => ['search']],
             ['email', 'filter', 'filter' => 'trim', 'on' => ['signup', 'edit', 'create', 'account-activation-resend', 'forgot-password', 'search']],
             ['email', 'exist', 'on' => ['account-activation-resend', 'forgot-password']],
 
