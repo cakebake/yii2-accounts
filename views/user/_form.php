@@ -26,14 +26,14 @@ use yii\widgets\ActiveForm;
                 <?php foreach ($model->profileFields as $key => $attribute) : ?>
                     <?php
                         $field = $form->field($profileModel, $attribute['name']);
-                        $field = $field->label($attribute['label']);
-                        $field = $field->hint($attribute['hint']);
+                        $field = isset($attribute['label']) ? $field->label($attribute['label']) : $field;
+                        $field = isset($attribute['hint']) ? $field->hint($attribute['hint']) : $field;
 
                         switch ($attribute['field_type']) {
                             case 'textarea':
                                 $field = $field->textarea($attribute['input_options']);
                                 break;
-                            case 'textinput':
+                            case 'textfield':
                                 $field = $field->textInput($attribute['input_options']);
                                 break;
                             default:

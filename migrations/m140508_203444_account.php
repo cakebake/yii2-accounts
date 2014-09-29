@@ -43,10 +43,8 @@ class m140508_203444_account extends Migration
         $this->createTable('{{%account_data}}', [
             'id' => Schema::TYPE_BIGPK,
             'account_id' => Schema::TYPE_BIGINT . ' NOT NULL DEFAULT 0',
-            'field_type' => Schema::TYPE_BIGINT . ' NOT NULL DEFAULT 0',
-            'field_name' => Schema::TYPE_STRING . '(255) NOT NULL',
+            'field_type' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0',
             'field_value' => Schema::TYPE_TEXT . ' NULL',
-            'validation_rules' => Schema::TYPE_TEXT . ' NULL',
         ], $tableOptions);
 
         /**

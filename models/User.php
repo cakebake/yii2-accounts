@@ -10,6 +10,7 @@ use yii\data\ActiveDataProvider;
 use yii\base\NotSupportedException;
 use yii\i18n\Formatter;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 /**
  * This is the default model class for table "account" and user identity
@@ -604,6 +605,14 @@ class User extends ActiveRecord implements IdentityInterface
                                 'label' => $this->profileFields[$name]['label'],
                                 'format' => 'html',
                                 'value' => $format->format($this->profileModel->{$name}, 'RelativeTime') . ' <span class="text-muted">(' . $this->profileModel->{$name} . ')</span>',
+                            ];
+                            break;
+                        case 'url':
+                            $data[] = [
+                                'attribute' => "profileData.$name",
+                                'label' => $this->profileFields[$name]['label'],
+                                'format' => 'raw',
+                                'value' => Html::a($this->profileModel->{$name}, $this->profileModel->{$name}, ['class' => 'label label-info', 'target' => '_blank']),
                             ];
                             break;
                         default:

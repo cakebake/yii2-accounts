@@ -9,12 +9,12 @@ use cakebake\behaviors\ScalableBehavior;
 /**
  * This is the model class for table "app_account_data".
  *
+ * In future, the model is extended with a dynamic model, which provides custom fields
+ *
  * @property string $id
  * @property string $account_id
  * @property string $field_type
- * @property string $field_name
  * @property string $field_value
- * @property string $validation_rules
  */
 class AccountData extends \yii\db\ActiveRecord
 {
@@ -84,7 +84,20 @@ class AccountData extends \yii\db\ActiveRecord
                 ],
                 'rules' => [
                     ['birthday', 'string', 'max' => 10],
-                    //['birthday', 'date'], @todo 2014-09-21 check if error comes IntlDateFormatter::parse(): Date parsing failed
+                    ['birthday', 'date', 'format' => 'Y-m-d'],
+                ]
+            ],
+            'website' => [
+                'name' => 'website',
+                'label' => Yii::t('accounts', $this->getAttributeLabel('website')),
+                'field_type' => 'url',
+                'input_options' => [
+                    'placeholder' => Yii::t('accounts', 'http://'),
+                    'maxlength' => 100,
+                ],
+                'rules' => [
+                    ['website', 'string', 'max' => 100],
+                    ['website', 'url', 'defaultScheme' => 'http'],
                 ]
             ],
         ];
@@ -120,7 +133,7 @@ class AccountData extends \yii\db\ActiveRecord
     {
         return ArrayHelper::merge(
             $this->virtualAttributesRules(),
-            [] //static attributes, if there are any to define
+            [] //static attributes, if there are any to validate
         );
     }
 }

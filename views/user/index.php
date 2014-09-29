@@ -13,13 +13,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <p class="clearfix">
         <?= Html::a('<span class="glyphicon glyphicon-plus"></span> ' . Yii::t('accounts', 'Create Account'), ['create'], ['class' => 'btn btn-success pull-right']) ?>
         <?= Html::button('<span class="glyphicon glyphicon-search"></span> ' . Yii::t('accounts', 'Advanced search'), ['id' => 'toggle-advanced-search', 'class' => 'btn btn-default']) ?>
-        <?= Html::a('<span class="glyphicon glyphicon-refresh"></span> ' . Yii::t('accounts', 'Refresh / Reset Filters'), ['index'], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('<span class="glyphicon glyphicon-refresh"></span> ' . Yii::t('accounts', 'Reset all'), ['index'], ['class' => 'btn btn-default']) ?>
     </p>
 
     <?php $this->registerJs("
     $('.accounts-index .accounts-search').hide();
     $(document).on('click', '#toggle-advanced-search', function(e){
-       //e.preventDefault();
        $('.accounts-index .accounts-search').slideToggle();
     });
     "); ?>
