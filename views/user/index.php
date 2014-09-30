@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'html',
                 'value' => function ($searchModel)
                 {
-                    return Html::a($searchModel->getNicename(), ['profile', 'u' => $searchModel->username]);
+                    return $searchModel->getProfileLink();
                 }
             ],
             'email:email',

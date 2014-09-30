@@ -63,6 +63,18 @@ class AccountData extends \yii\db\ActiveRecord
         }
 
         return $this->_virtualAttributesDefinition = [
+            'name' => [
+                'name' => 'name',
+                'label' => Yii::t('accounts', $this->getAttributeLabel('name')),
+                'field_type' => 'textfield',
+                'hint' => null,
+                'input_options' => [
+                    'maxlength' => 120,
+                ],
+                'rules' => [
+                    ['name', 'string', 'max' => 120],
+                ]
+            ],
             'about_me' => [
                 'name' => 'about_me',
                 'label' => Yii::t('accounts', $this->getAttributeLabel('about_me')),

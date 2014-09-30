@@ -66,7 +66,7 @@ class UserController extends Controller
                     [
                         'actions' => ['edit', 'delete'],
                         'allow' => true,
-                        'roles' => ['manager'], //@todo set to admin
+                        'roles' => ['admin'],
                     ],
                 ],
             ],

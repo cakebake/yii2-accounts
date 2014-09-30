@@ -379,13 +379,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function getNicename($default = 'Nobody')
     {
         if ($this->_nicename === null) {
-            $attributes = [
-                'username',
-                'email',
-            ];
-            foreach ($attributes as $attr) {
-                if (is_object($this) && !empty($this->{$attr})) {
-                    return $this->_nicename = $this->{$attr};
+            $attributes = ['name', 'username', 'email'];
+            if (is_object($this)) {
+                foreach ($attributes as $attr) {
+                    if (!empty($this->{$attr})) {
+                        return $this->_nicename = $this->{$attr};
+                    } elseif (is_object($this->profileModel) && !empty($this->profileModel->{$attr})) {
+                        return $this->_nicename = $this->profileModel->{$attr};
+                    }
                 }
             }
 
@@ -410,7 +411,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-    * Get users Nicename by its id
+    * Get users username by its id
     *
     * @param int $uid The user id
     * @return string|null Username if user exists or null
@@ -424,7 +425,17 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-    * Get users username by its id
+    * Get profile HTML link
+    *
+    * @return string Profile HTML Link
+    */
+    public function getProfileLink()
+    {
+        return Html::a($this->getNicename(), ['profile', 'u' => $this->username], ['class' => 'profile-link']);
+    }
+
+    /**
+    * Get profile HTML link by user id
     *
     * @param int $uid The user id
     * @param string $default The default value
@@ -435,10 +446,7 @@ class User extends ActiveRecord implements IdentityInterface
         if (empty($uid) || ($model = self::findById($uid)) === null)
             return $default;
 
-        $nicename = $this->getNicenameById($uid, $default);
-        $username = $model->username;
-
-        return Html::a($nicename, ['profile', 'u' => $username]);
+        return $model->getProfileLink();
     }
 
     /**
@@ -639,12 +647,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function getDetailViewProfileData()
     {
         $profileFields = array_keys($this->profileFields);
+        $excludeFields = ['name'];
         $data = [];
 
         if (!empty($profileFields) && $this->profileModel !== null) {
             foreach ($profileFields as $name) {
 
-                if (isset($this->profileModel->{$name}) &&
+                if (!in_array($name, $excludeFields) &&
+                    isset($this->profileModel->{$name}) &&
                     !empty($this->profileModel->{$name}) &&
                     is_scalar($this->profileModel->{$name})) {
 
@@ -652,23 +662,23 @@ class User extends ActiveRecord implements IdentityInterface
                         case 'date':
                             $format = new Formatter;
                             $data[] = [
-                                'attribute' => "profileData.$name",
+                                'attribute' => "profileModel.$name",
                                 'label' => $this->profileFields[$name]['label'],
                                 'format' => 'html',
-                                'value' => $format->format($this->profileModel->{$name}, 'RelativeTime') . ' <span class="text-muted">(' . $this->profileModel->{$name} . ')</span>',
+                                'value' => '<abbr title="' . $this->profileModel->{$name} . '">' . $format->format($this->profileModel->{$name}, 'RelativeTime') . '</abbr>',
                             ];
                             break;
                         case 'url':
                             $data[] = [
-                                'attribute' => "profileData.$name",
+                                'attribute' => "profileModel.$name",
                                 'label' => $this->profileFields[$name]['label'],
                                 'format' => 'raw',
-                                'value' => Html::a($this->profileModel->{$name}, $this->profileModel->{$name}, ['class' => 'label label-info', 'target' => '_blank']),
+                                'value' => Html::a($this->profileModel->{$name}, $this->profileModel->{$name}, ['target' => '_blank']),
                             ];
                             break;
                         default:
                             $data[] = [
-                                'attribute' => "profileData.$name",
+                                'attribute' => "profileModel.$name",
                                 'label' => $this->profileFields[$name]['label'],
                                 'value' => $this->profileModel->{$name},
                             ];
