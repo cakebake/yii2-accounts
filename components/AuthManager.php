@@ -12,11 +12,6 @@ class AuthManager extends \yii\rbac\DbManager
     /**
      * @inheritdoc
      */
-    public $db = 'db';
-
-    /**
-     * @inheritdoc
-     */
     public $itemTable = '{{%account_auth_item}}';
 
     /**
@@ -33,4 +28,13 @@ class AuthManager extends \yii\rbac\DbManager
      * @inheritdoc
      */
     public $ruleTable = '{{%account_auth_rule}}';
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        $this->db = Yii::$app->getModule('accounts')->db;
+        parent::init();
+    }
 }

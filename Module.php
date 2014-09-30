@@ -43,6 +43,11 @@ class Module extends \yii\base\Module
     public $enableEmailEditActivation = true;
 
     /**
+    * @var Connection|string The application component ID of the DB connection.
+    */
+    public $db = 'db';
+
+    /**
      * @var array Models of this module
      */
     private $_models = [];
