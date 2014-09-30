@@ -84,7 +84,7 @@ class AccountData extends \yii\db\ActiveRecord
                 ],
                 'rules' => [
                     ['birthday', 'string', 'max' => 10],
-                    ['birthday', 'date', 'format' => 'Y-m-d'],
+                    ['birthday', 'date', 'format' => 'php:Y-m-d'],
                 ]
             ],
             'website' => [
