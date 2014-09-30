@@ -11,6 +11,8 @@ use yii\base\NotSupportedException;
 use yii\i18n\Formatter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the default model class for table "account" and user identity
@@ -25,6 +27,8 @@ use yii\helpers\Html;
  * @property integer $status
  * @property string $updated_at
  * @property string $created_at
+ * @property integer $created_by
+ * @property integer $updated_by
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -280,8 +284,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
+            BlameableBehavior::className(),
             'timestamp' => [
-                'class' => 'yii\behaviors\TimestampBehavior',
+                'class' => TimestampBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
@@ -369,9 +374,9 @@ class User extends ActiveRecord implements IdentityInterface
     /**
     * Get users Nicename
     *
-    * @param string|null $default The default value
+    * @param string $default The default value
     */
-    public function getNicename($default = null)
+    public function getNicename($default = 'Nobody')
     {
         if ($this->_nicename === null) {
             $attributes = [
@@ -379,8 +384,8 @@ class User extends ActiveRecord implements IdentityInterface
                 'email',
             ];
             foreach ($attributes as $attr) {
-                if (is_object($this) && !empty($this->$attr)) {
-                    return $this->_nicename = $this->$attr;
+                if (is_object($this) && !empty($this->{$attr})) {
+                    return $this->_nicename = $this->{$attr};
                 }
             }
 
@@ -388,6 +393,52 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         return $this->_nicename;
+    }
+
+    /**
+    * Get users Nicename by its id
+    *
+    * @param int $uid The user id
+    * @param string $default The default value
+    */
+    public function getNicenameById($uid, $default = 'Nobody')
+    {
+        if (empty($uid) || ($model = self::findById($uid)) === null)
+            return $default;
+
+        return $model->getNicename($default);
+    }
+
+    /**
+    * Get users Nicename by its id
+    *
+    * @param int $uid The user id
+    * @return string|null Username if user exists or null
+    */
+    public function getUsernameById($uid)
+    {
+        if (empty($uid) || ($model = self::findById($uid)) === null)
+            return null;
+
+        return $model->username;
+    }
+
+    /**
+    * Get users username by its id
+    *
+    * @param int $uid The user id
+    * @param string $default The default value
+    * @return string Profile HTML Link
+    */
+    public function getProfileLinkbyId($uid, $default = 'Nobody')
+    {
+        if (empty($uid) || ($model = self::findById($uid)) === null)
+            return $default;
+
+        $nicename = $this->getNicenameById($uid, $default);
+        $username = $model->username;
+
+        return Html::a($nicename, ['profile', 'u' => $username]);
     }
 
     /**

@@ -35,6 +35,8 @@ class m140508_203444_account extends Migration
             'status' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 10',
             'updated_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
             'created_at' => Schema::TYPE_TIMESTAMP . ' NOT NULL',
+            'created_by' => Schema::TYPE_BIGINT . ' NULL DEFAULT NULL',
+            'updated_by' => Schema::TYPE_BIGINT . ' NULL DEFAULT NULL',
         ], $tableOptions);
 
         /**
@@ -60,6 +62,8 @@ class m140508_203444_account extends Migration
             'status' => '10',
             'created_at' => $time,
             'updated_at' => $time,
+            'created_by' => '0',
+            'updated_by' => '0',
         ]);
         //user:password
         $this->insert('{{%account}}', [
@@ -71,6 +75,8 @@ class m140508_203444_account extends Migration
             'status' => '10',
             'created_at' => $time,
             'updated_at' => $time,
+            'created_by' => '0',
+            'updated_by' => '0',
         ]);
     }
 

@@ -48,14 +48,16 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'updated_at',
+                'label' => Yii::t('accounts', 'Updated'),
                 'format' => 'html',
-                'value' => $model->getUpdatedTime() . ' <span class="text-muted">(' . $model->updated_at . ')</span>',
+                'value' => $model->getUpdatedTime() . ' <span class="text-muted">(' . $model->updated_at . ')</span>' . ' ' . Yii::t('accounts', 'by') . ' ' . $model->getProfileLinkbyId($model->updated_by, Yii::t('accounts', 'Nobody')),
                 'visible' => Yii::$app->user->can('manager'),
             ],
             [
                 'attribute' => 'created_at',
+                'label' => Yii::t('accounts', 'Created'),
                 'format' => 'html',
-                'value' => $model->getCreatedTime() . ' <span class="text-muted">(' . $model->created_at . ')</span>',
+                'value' => $model->getCreatedTime() . ' <span class="text-muted">(' . $model->created_at . ')</span>' . ' ' . Yii::t('accounts', 'by') . ' ' . $model->getProfileLinkbyId($model->created_by, Yii::t('accounts', 'Nobody')),
                 'visible' => Yii::$app->user->can('manager'),
             ],
         ], $model->detailViewProfileData),
