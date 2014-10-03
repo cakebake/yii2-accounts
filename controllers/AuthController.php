@@ -4,118 +4,141 @@ namespace cakebake\accounts\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\UnauthorizedHttpException;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
+/**
+ * AuthController implements the CRUD actions for AccountAuthItem model.
+ */
 class AuthController extends Controller
 {
     /**
-    * Testing...........
-    */
-    public function actionIndex()
+     * @inheritdoc
+     */
+    public function behaviors()
     {
-        $auth = Yii::$app->authManager;
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
+        ];
+    }
 
-        // add permissions
-        $createAccount = $this->createAuthPermission('createAccount', 'Create an account');
-        $readAccount = $this->createAuthPermission('readAccount', 'Read an account');
-        $editAccount = $this->createAuthPermission('editAccount', 'Edit an account');
-        $deleteAccount = $this->createAuthPermission('deleteAccount', 'Delete an account');
-
-        // add role "user" and assign permissions
-        $user = $this->createAuthRole('user');
-        $this->assignAuthRolePermission($user, $readAccount);
-
-        // add role "manager" and assign permissions
-        $manager = $this->createAuthRole('manager');
-        $this->assignAuthRolePermission($manager, [$user, $createAccount, $editAccount]);
-
-        // add role "admin" and assign permissions
-        $admin = $this->createAuthRole('admin');
-        $this->assignAuthRolePermission($admin, [$manager, $deleteAccount]);
-
-        //assign roles to user ids
-        $this->assignAuthRoleToUser($manager, 2); //user
-        $this->assignAuthRoleToUser($admin, 1); //admin
-
-
+    /**
+     * Lists all AccountAuthItem models
+     *
+     * @param null|string|integer $type The auth item type
+     * @return mixed
+     */
+    public function actionIndex($type = null)
+    {
+        $searchModel = Yii::$app->getModule('accounts')->getModel('auth_item', true, ['scenario' => 'search']);
+        $type = ($type === null) ? $searchModel::TYPE_ROLE : $type;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $type);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'type' => $type,
         ]);
     }
 
     /**
-    * Creates a new permission
-    *
-    * @param string $name
-    * @param string $description
-    * @return Permission
-    */
-    protected function createAuthPermission($name, $description)
+     * Creates a new AccountAuthItem model.
+     *
+     * @param string|integer $type The auth item type
+     * @return mixed
+     */
+    public function actionCreate($type)
     {
-        $auth = Yii::$app->authManager;
+        $model = Yii::$app->getModule('accounts')->getModel('auth_item', true, ['scenario' => 'create']);
+        $model->setAuthType($type);
 
-        if (($permission = $auth->getPermission($name)) === null) {
-            $permission = $auth->createPermission($name);
-            $permission->description = $description;
-            $auth->add($permission);
-        }
-
-        return $permission;
-    }
-
-    /**
-    * Creates a new Role
-    *
-    * @param string $name
-    * @return Role
-    */
-    protected function createAuthRole($name)
-    {
-        $auth = Yii::$app->authManager;
-
-        if (($role = $auth->getRole($name)) === null) {
-            $role = $auth->createRole($name);
-            $auth->add($role);
-        }
-
-        return $role;
-    }
-
-    /**
-    * Adds an item as a child of another item
-    *
-    * @param mixed $role
-    * @param mixed $permission
-    */
-    protected function assignAuthRolePermission($role, $permission)
-    {
-        $auth = Yii::$app->authManager;
-
-        if (!is_array($permission))
-            $permission = [$permission];
-
-        foreach ($permission as $perm) {
-            if (!$auth->hasChild($role, $perm)) {
-                $auth->addChild($role, $perm);
-            }
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->name]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+                'type' => $type,
+            ]);
         }
     }
 
     /**
-    * Assign role to user
-    *
-    * @param Role $role
-    * @param string|integer $userId the user ID (see [[\yii\web\User::id]])
-    */
-    protected function assignAuthRoleToUser($role, $userId)
+     * Displays a single AccountAuthItem model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionView($id)
     {
-        $auth = Yii::$app->authManager;
-        $assignments = $auth->getAssignments($userId);
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
 
-        if (!isset($assignments[$role->name])) {
-            $auth->assign($role, $userId);
+    /**
+     * Updates an existing AccountAuthItem model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $model->setScenario('update');
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->name]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
         }
     }
 
+    /**
+     * Deletes an existing AccountAuthItem model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Finds the AccountAuthItem model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return AccountAuthItem the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        $modelPath = Yii::$app->getModule('accounts')->getModel('auth_item');
+        if (($model = $modelPath::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
 }

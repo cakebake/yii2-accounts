@@ -48,6 +48,11 @@ class Module extends \yii\base\Module
     public $db = 'db';
 
     /**
+    * @var bool Show some useful hints (For example code usage of RBAC config)
+    */
+    public $showCodeUsageHints = false;
+
+    /**
      * @var array Models of this module
      */
     private $_models = [];
@@ -111,6 +116,7 @@ class Module extends \yii\base\Module
         $this->_models = [
             'user' => 'cakebake\accounts\models\User',
             'account_data' => 'cakebake\accounts\models\AccountData',
+            'auth_item' => 'cakebake\accounts\models\AccountAuthItem',
         ];
     }
 }

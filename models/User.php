@@ -126,7 +126,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['username', 'unique', 'on' => ['signup', 'edit', 'create']],
             ['username', 'string', 'min' => 4, 'max' => 60, 'on' => ['login', 'signup', 'edit', 'create']],
             ['username', 'string', 'on' => ['search']],
-            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'on' => ['signup', 'edit', 'create', 'search'], 'message' => Yii::t('accounts', 'Username must consist of letters, numbers, underscores and dashes only.')],
+            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/', 'on' => ['signup', 'edit', 'create', 'search'], 'message' => Yii::t('accounts', 'Username may only consist of letters, numbers, underscores and dashes.')],
             ['username', 'filter', 'filter' => 'trim', 'on' => ['login', 'signup', 'edit', 'create', 'search']],
 
             //email

@@ -49,24 +49,9 @@ class UserController extends Controller
                         }
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout', 'index', 'profile', 'create', 'edit', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
-                    ],
-                    [
-                        'actions' => ['index', 'profile'],
-                        'allow' => true,
-                        'roles' => ['user'],
-                    ],
-                    [
-                        'actions' => ['create'],
-                        'allow' => true,
-                        'roles' => ['manager'],
-                    ],
-                    [
-                        'actions' => ['edit', 'delete'],
-                        'allow' => true,
-                        'roles' => ['admin'],
                     ],
                 ],
             ],
@@ -398,6 +383,11 @@ class UserController extends Controller
         if (($userModel = $userModelPath::findByUsername($u)) === null) {
             throw new NotFoundHttpException(Yii::t('accounts', 'The requested page does not exist.'));
         }
+
+        //authorization
+//        if (!Yii::$app->user->can('edit', ['model' => $userModel])) {
+//            throw new UnauthorizedHttpException(Yii::t('accounts', 'You have no permission to perform this action.'));
+//        }
 
         $profileModel = ($userModel->profileModel !== null) ? $userModel->profileModel : Yii::$app->getModule('accounts')->getModel('account_data');
 

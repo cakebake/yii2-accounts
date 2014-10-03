@@ -66,7 +66,7 @@ use yii\widgets\ActiveForm;
             <?php if (!$model->isNewRecord && Yii::$app->getModule('accounts')->enableEmailEditActivation) : ?>
                 <p><?= Yii::t('accounts', 'If you change the following information, the account needs to be reactivated. For this purpose, an activation email will be sent.') ?></p>
             <?php endif ?>
-            <?= $form->field($model, 'username')->textInput(['maxlength' => 60]) ?>
+            <?= $form->field($model, 'username')->textInput(['maxlength' => 60])->hint(Yii::t('accounts', 'May only consist of letters, numbers, underscores and dashes.')) ?>
             <?= $form->field($model, 'email')->textInput(['maxlength' => 60]) ?>
         </div>
     </div>
