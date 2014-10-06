@@ -19,12 +19,8 @@ use yii\behaviors\TimestampBehavior;
  * @property string $data
  * @property integer $created_at
  * @property integer $updated_at
- *
- * @property AccountAuthAssignment[] $accountAuthAssignments
- * @property AccountAuthRule $ruleName
- * @property AccountAuthItemChild[] $accountAuthItemChildren
  */
-class AccountAuthItem extends \yii\db\ActiveRecord
+class AuthItem extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -171,29 +167,46 @@ class AccountAuthItem extends \yii\db\ActiveRecord
         return $this->type = $type;
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAccountAuthAssignments()
-    {
-        return $this->hasMany(AccountAuthAssignment::className(), ['item_name' => 'name']);
-    }
+//    /**
+//    * @return Assigned AuthItem Children
+//    */
+//    public function getAssignedChildren()
+//    {
+//            switch ($this->type) {
+//                case self::TYPE_ROLE:
+//                    $children =
+//                    break;
+////                case self::TYPE_PERMISSION:
+////                    $item = $auth->createPermission($model->name);
+////                    break;
+//            }
+//    }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRuleName()
-    {
-        return $this->hasOne(AccountAuthRule::className(), ['name' => 'rule_name']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAccountAuthItemChildren()
-    {
-        return $this->hasMany(AccountAuthItemChild::className(), ['child' => 'name']);
-    }
+//    /**
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getAccountAuthAssignments()
+//    {
+//        return $this->hasMany(AccountAuthAssignment::className(), ['item_name' => 'name']);
+//    }
+//
+//    /**
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getRuleName()
+//    {
+//        return $this->hasOne(AccountAuthRule::className(), ['name' => 'rule_name']);
+//    }
+//
+//    /**
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getAuthItemChildren()
+//    {
+//        $model = Yii::$app->getModule('accounts')->getModel('auth_item_child');
+//
+//        return $this->hasMany($model::className(), ['child' => 'name']);
+//    }
 
     /**
      * @inheritdoc

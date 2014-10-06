@@ -9,11 +9,8 @@ use Yii;
  *
  * @property string $parent
  * @property string $child
- *
- * @property AccountAuthItem $parent0
- * @property AccountAuthItem $child0
  */
-class AccountAuthItemChild extends \yii\db\ActiveRecord
+class AuthItemChild extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -45,19 +42,19 @@ class AccountAuthItemChild extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getParent0()
-    {
-        return $this->hasOne(AccountAuthItem::className(), ['name' => 'parent']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getChild0()
-    {
-        return $this->hasOne(AccountAuthItem::className(), ['name' => 'child']);
-    }
+//    /**
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getParent0()
+//    {
+//        return $this->hasOne(AccountAuthItem::className(), ['name' => 'parent']);
+//    }
+//
+//    /**
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getChild0()
+//    {
+//        return $this->hasOne(AccountAuthItem::className(), ['name' => 'child']);
+//    }
 }

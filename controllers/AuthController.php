@@ -9,6 +9,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\data\ArrayDataProvider;
 
 /**
  * AuthController implements the CRUD actions for AccountAuthItem model.
@@ -68,9 +69,20 @@ class AuthController extends Controller
     public function actionCreate($type)
     {
         $model = Yii::$app->getModule('accounts')->getModel('auth_item', true, ['scenario' => 'create']);
-        $model->setAuthType($type);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $auth = Yii::$app->authManager;
+            switch ($type) {
+                case $model::TYPE_ROLE:
+                    $item = $auth->createRole($model->name);
+                    break;
+                case $model::TYPE_PERMISSION:
+                    $item = $auth->createPermission($model->name);
+                    break;
+            }
+            $item->description = $model->description;
+            $auth->add($item);
+
             return $this->redirect(['view', 'id' => $model->name]);
         } else {
             return $this->render('create', [
@@ -78,18 +90,6 @@ class AuthController extends Controller
                 'type' => $type,
             ]);
         }
-    }
-
-    /**
-     * Displays a single AccountAuthItem model.
-     * @param string $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
     }
 
     /**
@@ -102,14 +102,66 @@ class AuthController extends Controller
     {
         $model = $this->findModel($id);
         $model->setScenario('update');
+        $auth = Yii::$app->authManager;
+        $possibleChildren = [];
+        $assignedChildren = [];
+
+        switch ($model->type) {
+            case $model::TYPE_ROLE:
+                $possibleChildren = new ArrayDataProvider([
+                    'allModels' => $auth->getPermissions(),
+                    'sort' => [
+                        'attributes' => ['name', 'createdAt'],
+                    ],
+                    'pagination' => [
+                        'pageSize' => 10,
+                    ],
+                ]);
+                $assignedChildren = $auth->getPermissionsByRole($model->name);
+                break;
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
             return $this->redirect(['view', 'id' => $model->name]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'possibleChildren' => $possibleChildren,
+                'assignedChildren' => $assignedChildren,
             ]);
         }
+    }
+
+    /**
+     * Displays a single AccountAuthItem model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        $model = $this->findModel($id);
+        $auth = Yii::$app->authManager;
+
+        $assigned = [];
+        switch ($model->type) {
+            case $model::TYPE_ROLE:
+                $assigned['permissions'] = new ArrayDataProvider([
+                    'allModels' => $auth->getPermissionsByRole($model->name),
+                    'sort' => [
+                        'attributes' => ['name', 'createdAt'],
+                    ],
+                    'pagination' => [
+                        'pageSize' => 10,
+                    ],
+                ]);
+                break;
+        }
+
+        return $this->render('view', [
+            'model' => $model,
+            'assigned' => $assigned,
+        ]);
     }
 
     /**
@@ -134,7 +186,7 @@ class AuthController extends Controller
      */
     protected function findModel($id)
     {
-        $modelPath = Yii::$app->getModule('accounts')->getModel('auth_item');
+        $modelPath = Yii::$app->getModule('accounts')->getModel('auth_item', false);
         if (($model = $modelPath::findOne($id)) !== null) {
             return $model;
         } else {

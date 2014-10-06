@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('accounts', 'Accounts'), 'url' => ['user/index']];
@@ -27,28 +28,59 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="description">
             <?= $model->description ?>
         </div>
-        <br />
     <?php endif ?>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            //'name',
-            //'type',
-            'typeTitle',
-            //'description:ntext',
-            'rule_name',
-            'data:ntext',
-            'created_at:RelativeTime',
-            'updated_at:RelativeTime',
-        ],
-    ]) ?>
 
     <?php if (Yii::$app->getModule('accounts')->showCodeUsageHints) : ?>
-        <div class="usage-hint">
-            <h4><?= Yii::t('accounts', 'Example usage in the source code:') ?></h4>
-            <code>if (\Yii::$app->user->can('<?= $model->name ?>')) { ... }</code>
-        </div>
+        <p class="usage-hint">
+            <span><?= Yii::t('accounts', 'Example usage:') ?></span>
+            <code>&lt;?php if (\Yii::$app-&gt;user-&gt;can('<?= $model->name ?>')) : ?&gt;</code>
+        </p>
     <?php endif ?>
+
+    <div class="row">
+        <div class="col col-md-4">
+            <h2><?= Yii::t('accounts', 'Details') ?></h2>
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    [
+                        'attribute' => 'name',
+                        'format' => 'raw',
+                        'value' => Yii::$app->getModule('accounts')->showCodeUsageHints ? Html::textInput(null, $model->name, ['readonly' => 'readonly', 'onclick' => 'this.focus();this.select();', 'class' => 'form-control', 'style' => 'cursor:pointer;']) : $model->name,
+                    ],
+                    'typeTitle',
+                    'rule_name',
+                    'data:ntext',
+                    'created_at:RelativeTime',
+                    'updated_at:RelativeTime',
+                ],
+            ]) ?>
+        </div>
+
+        <div class="col col-md-8">
+            <?php if (isset($assigned['permissions'])) : ?>
+                <h2><?= Yii::t('accounts', 'Assigned Permissions') ?></h2>
+                <?= GridView::widget([
+                    'dataProvider' => $assigned['permissions'],
+                    'layout' => "{items}\n{pager}\n{summary}",
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+                        [
+                            'attribute' => 'name',
+                            'format' => 'raw',
+                            'value' => function ($row)
+                            {
+                                return Html::a($row->name, ['view', 'id' => $row->name]);
+                            }
+                        ],
+                        'description:ntext',
+                        'ruleName',
+                        'createdAt:RelativeTime',
+                    ],
+                ]); ?>
+            <?php endif ?>
+        </div>
+
+    </div>
 
 </div>
