@@ -6,6 +6,7 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
+use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\behaviors\TimestampBehavior;
 
@@ -116,6 +117,60 @@ class AuthItem extends \yii\db\ActiveRecord
     public function getItemLink()
     {
         return Html::a($this->name, ['view', 'id' => $this->name]);
+    }
+
+    /**
+    * @param bool|string Parent name or null for current model
+    * @return array Assigned childrens for AuthItem model
+    */
+    public function getPermissionsByRole($name = null)
+    {
+        return Yii::$app->authManager->getPermissionsByRole(($name !== null) ? $name : $this->name);
+    }
+
+    /**
+    * Get all permissions and check if each permission is assigned to current model
+    * @return array All Possible childrens for AuthItem model
+    */
+    public function getAllPermissions()
+    {
+        $allPermissions = ArrayHelper::toArray(Yii::$app->authManager->getPermissions());
+
+        foreach ($allPermissions as $name => $permission) {
+            $allPermissions[$name]['isChild'] = false;
+            if (ArrayHelper::keyExists($name, $this->permissionsByRole)) {
+                $allPermissions[$name]['isChild'] = true;
+            }
+        }
+
+        return $allPermissions;
+    }
+
+    /**
+    * Updates current AuthItem children
+    *
+    * @param array $children
+    */
+    public function updateChildren($children)
+    {
+        if (!is_array($children))
+            return false;
+
+        $auth = Yii::$app->authManager;
+        switch ($this->type) {
+            case self::TYPE_ROLE:
+                $role = $auth->getRole($this->name);
+                foreach ($this->allPermissions as $name => $permission) {
+                    if (isset($children[$name]) && !$permission['isChild']) {
+                        $auth->addChild($role, $auth->getPermission($name));
+                    }
+                    if (!isset($children[$name]) && $permission['isChild']) {
+
+                        $auth->removeChild($role, $auth->getPermission($name));
+                    }
+                }
+                break;
+        }
     }
 
     /**

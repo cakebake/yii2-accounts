@@ -20,39 +20,54 @@ use yii\grid\GridView;
                 <h2><?= Yii::t('accounts', 'Permissions') ?></h2>
                 <?= GridView::widget([
                     'dataProvider' => $possibleChildren,
+                    'id' => 'role-permissions-grid',
                     'layout' => "{items}\n{pager}\n{summary}",
+                    'tableOptions' => [
+                        'class' => 'table table-striped table-hover table-condensed table-bordered',
+                    ],
+                    'rowOptions' => function ($row, $key, $index, $grid) {
+                        return [
+                            'class' => $row['isChild'] ? 'success' : null,
+                        ];
+                    },
                     'columns' => [
                         [
-                            'class' => 'yii\grid\CheckboxColumn',
-//                            'checkboxOptions' => [
-//                                'checked' => function ($row, $assignedChildren)
-//                                {
-//                                    return $row->name == 'createAccount';
-//                                    //return array_key_exists($row->name, $assignedChildren);
-//                                }
-//                            ],
-//                            'checkboxOptions' => function ($row)
-//                            {
-//                                global $assignedChildren;
-//                                DebugBreak();
-//                                return [
-//                                    'checked' => array_key_exists($row->name, $assignedChildren) ? 'checked' : null,
-//                                ];
-//                            }
+                            'header' =>  Html::checkBox('permissions_all', false, ['class' => 'select-all-on-check']),
+                            'format' => 'raw',
+                            'value' => function ($row, $key, $index, $column)
+                            {
+                                return Html::checkbox('assignedChildren[' . $row['name'] . ']', $row['isChild'], ['class' => 'select-on-check', 'id' => $row['name']]);
+                            },
                         ],
                         [
                             'attribute' => 'name',
                             'format' => 'raw',
                             'value' => function ($row)
                             {
-                                return Html::a($row->name, ['view', 'id' => $row->name]);
+                                return Html::label($row['name'], $row['name']);
                             }
                         ],
-                        'description:ntext',
+                        //'description:ntext',
                         'ruleName',
                         'createdAt:RelativeTime',
+                        [
+                            'class' => 'yii\grid\ActionColumn',
+                            'buttons' => [
+                                'delete' => function ($url, $model, $key) {
+                                    return null;
+                                },
+                            ],
+                        ],
                     ],
                 ]); ?>
+                <?php
+                    //js for own header "select all checkbox" column
+                    $this->registerJs("
+                        jQuery('.select-all-on-check').click(function(){
+                            $('.select-on-check').prop('checked', $(this).prop('checked'));
+                        });
+                    ");
+                ?>
             <?php endif ?>
         </div>
     </div>

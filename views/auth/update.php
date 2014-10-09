@@ -18,7 +18,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'type' => $model->type,
         'possibleChildren' => $possibleChildren,
-        'assignedChildren' => $assignedChildren,
     ]) ?>
 
 </div>

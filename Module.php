@@ -117,7 +117,6 @@ class Module extends \yii\base\Module
             'user' => 'cakebake\accounts\models\User',
             'account_data' => 'cakebake\accounts\models\AccountData',
             'auth_item' => 'cakebake\accounts\models\AuthItem',
-            //'auth_item_child' => 'cakebake\accounts\models\AuthItemChild',
         ];
     }
 }

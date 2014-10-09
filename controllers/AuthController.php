@@ -102,33 +102,29 @@ class AuthController extends Controller
     {
         $model = $this->findModel($id);
         $model->setScenario('update');
-        $auth = Yii::$app->authManager;
-        $possibleChildren = [];
-        $assignedChildren = [];
 
         switch ($model->type) {
             case $model::TYPE_ROLE:
                 $possibleChildren = new ArrayDataProvider([
-                    'allModels' => $auth->getPermissions(),
+                    'allModels' => $model->allPermissions,
                     'sort' => [
                         'attributes' => ['name', 'createdAt'],
                     ],
                     'pagination' => [
-                        'pageSize' => 10,
+                        'pageSize' => 20,
                     ],
                 ]);
-                $assignedChildren = $auth->getPermissionsByRole($model->name);
                 break;
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load($post = Yii::$app->request->post()) && $model->save()) {
+            $model->updateChildren(isset($post['assignedChildren']) ? $post['assignedChildren'] : []);
 
             return $this->redirect(['view', 'id' => $model->name]);
         } else {
             return $this->render('update', [
                 'model' => $model,
                 'possibleChildren' => $possibleChildren,
-                'assignedChildren' => $assignedChildren,
             ]);
         }
     }
@@ -141,18 +137,17 @@ class AuthController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        $auth = Yii::$app->authManager;
 
         $assigned = [];
         switch ($model->type) {
             case $model::TYPE_ROLE:
                 $assigned['permissions'] = new ArrayDataProvider([
-                    'allModels' => $auth->getPermissionsByRole($model->name),
+                    'allModels' => $model->permissionsByRole,
                     'sort' => [
                         'attributes' => ['name', 'createdAt'],
                     ],
                     'pagination' => [
-                        'pageSize' => 10,
+                        'pageSize' => 20,
                     ],
                 ]);
                 break;
