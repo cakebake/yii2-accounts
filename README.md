@@ -1,4 +1,4 @@
-yii2-accounts (dev)
+yii2-accounts (!this plugin is not currently developed!)
 ============
 
 User, manage, login and profile module for yii2 framework
